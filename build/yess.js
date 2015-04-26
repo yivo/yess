@@ -3,13 +3,15 @@
 
   (function(root, factory) {
     if (typeof define === 'function' && define.amd) {
-      return define(['lodash'], factory);
+      return define(['lodash'], function(_) {
+        return root.yess = factory(root, _);
+      });
     } else if (typeof module === 'object' && typeof module.exports === 'object') {
-      return module.exports = factory(require('lodash'));
+      return module.exports = factory(root, require('lodash'));
     } else {
-      return root.yess = factory(root._);
+      return root.yess = factory(root, root._);
     }
-  })(this, function(_) {
+  })(this, function(root, _) {
     var apply, bind, createObject, debounce, extend, generateId, insertAt, isArray, isEnabled, isFunction, lodashBind, lodashDebounce, mapMethod, once, removeAt, replaceAll, slice, splice, traverseObject, uniqueId, yess;
     yess = {};
     isArray = _.isArray, extend = _.extend;

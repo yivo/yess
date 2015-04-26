@@ -11,11 +11,15 @@ plumber     = require 'gulp-plumber'
 
 gulp.task 'default', ['build', 'watch'], ->
 
+dependencies = [
+  {name: 'lodash', as: '_'}
+]
+
 gulp.task 'build', ->
   gulp.src('source/manifest.coffee')
   .pipe plumber()
   .pipe preprocess()
-  .pipe iife type: 'coffee', namespace: 'yess', dependencies: {'lodash': '_'}
+  .pipe iife {global: 'yess', dependencies}
   .pipe concat('yess.coffee')
   .pipe gulp.dest('build')
   .pipe coffee()

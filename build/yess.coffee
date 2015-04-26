@@ -1,12 +1,12 @@
 ((root, factory) ->
   if typeof define is 'function' and define.amd
-    define(['lodash'], factory)
+    define ['lodash'], (_) ->
+      root.yess = factory(root, _)
   else if typeof module is 'object' && typeof module.exports is 'object'
-    module.exports = factory(require('lodash'))
+    module.exports = factory(root, require('lodash'))
   else
-    root.yess = factory(root._)
-)(@, (_) ->
-
+    root.yess = factory(root, root._)
+)(this, (root, _) ->
   yess = {}
   
   {isArray, extend} = _
