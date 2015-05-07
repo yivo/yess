@@ -12,8 +12,8 @@
       factory(root, root._);
     }
   })(this, function(root, _) {
-    var applyWith, bindMethod, createObject, debounceMethod, extend, generateId, insertAt, isArray, isEnabled, isFunction, lodashBind, lodashDebounce, mapMethod, mixin, nativeSlice, nativeSplice, onceMethod, removeAt, replaceAll, traverseObject, uniqueId;
-    isArray = _.isArray, extend = _.extend, mixin = _.mixin;
+    var applyWith, bindMethod, createObject, debounceMethod, extend, generateId, insertAt, isArray, isEnabled, isFunction, lodashBind, lodashDebounce, mapMethod, nativeSlice, nativeSplice, onceMethod, removeAt, replaceAll, traverseObject, uniqueId;
+    isArray = _.isArray, extend = _.extend;
     nativeSplice = Array.prototype.splice;
     nativeSlice = Array.prototype.slice;
     insertAt = function(container, items, pos) {
@@ -38,14 +38,14 @@
       }
       return nativeSplice.call(container, pos, num);
     };
-    mixin({
+    _.mixin({
       insertAt: insertAt,
       replaceAll: replaceAll,
       removeAt: removeAt,
       nativeSlice: nativeSlice,
       nativeSplice: nativeSplice
     });
-    isFunction = _.isFunction, extend = _.extend, mixin = _.mixin;
+    isFunction = _.isFunction, extend = _.extend;
     lodashBind = _.bind;
     lodashDebounce = _.debounce;
     applyWith = function(func, context, args) {
@@ -106,14 +106,13 @@
         object[method] = wrapper;
       }
     };
-    mixin({
+    _.mixin({
       applyWith: applyWith,
       onceMethod: onceMethod,
       bindMethod: bindMethod,
       debounceMethod: debounceMethod,
       mapMethod: mapMethod
     });
-    mixin = _.mixin;
     traverseObject = function(obj, path) {
       var i, j, len, ret;
       ret = obj;
@@ -149,18 +148,18 @@
       }
       return obj;
     };
-    mixin({
+    _.mixin({
       traverseObject: traverseObject,
       createObject: createObject
     });
-    extend = _.extend, uniqueId = _.uniqueId, mixin = _.mixin;
+    extend = _.extend, uniqueId = _.uniqueId;
     isEnabled = function(options, option) {
       return !options || options[option] === void 0 || !!options[option];
     };
     generateId = function() {
       return +uniqueId();
     };
-    mixin({
+    _.mixin({
       isEnabled: isEnabled,
       generateId: generateId
     });

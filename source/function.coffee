@@ -1,4 +1,4 @@
-{isFunction, extend, mixin} = _
+{isFunction, extend} = _
 
 lodashBind     = _.bind
 lodashDebounce = _.debounce
@@ -48,4 +48,4 @@ onceMethod = (object, methods...) ->
     object[method] = wrapper
   return
 
-mixin {applyWith, onceMethod, bindMethod, debounceMethod, mapMethod}
+_.mixin {applyWith, onceMethod, bindMethod, debounceMethod, mapMethod}

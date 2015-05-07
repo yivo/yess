@@ -1,5 +1,3 @@
-{mixin} = _
-
 traverseObject = (obj, path) ->
   ret = obj
   len = path.length
@@ -23,4 +21,4 @@ createObject = ->
     obj[arguments[i - 1]] = arguments[i]
   obj
 
-mixin {traverseObject, createObject}
+_.mixin {traverseObject, createObject}

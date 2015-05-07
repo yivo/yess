@@ -8,7 +8,7 @@
     factory(root, root._)
   return
 )(this, (root, _) ->
-  {isArray, extend, mixin} = _
+  {isArray, extend} = _
   
   nativeSplice = Array::splice
   nativeSlice  = Array::slice
@@ -29,8 +29,8 @@
   removeAt = (container, pos, num = 1) ->
     nativeSplice.call(container, pos, num)
   
-  mixin {insertAt, replaceAll, removeAt, nativeSlice, nativeSplice}
-  {isFunction, extend, mixin} = _
+  _.mixin {insertAt, replaceAll, removeAt, nativeSlice, nativeSplice}
+  {isFunction, extend} = _
   
   lodashBind     = _.bind
   lodashDebounce = _.debounce
@@ -80,9 +80,7 @@
       object[method] = wrapper
     return
   
-  mixin {applyWith, onceMethod, bindMethod, debounceMethod, mapMethod}
-  {mixin} = _
-  
+  _.mixin {applyWith, onceMethod, bindMethod, debounceMethod, mapMethod}
   traverseObject = (obj, path) ->
     ret = obj
     len = path.length
@@ -106,14 +104,14 @@
       obj[arguments[i - 1]] = arguments[i]
     obj
   
-  mixin {traverseObject, createObject}
-  {extend, uniqueId, mixin} = _
+  _.mixin {traverseObject, createObject}
+  {extend, uniqueId} = _
   
   isEnabled = (options, option) ->
     !options or options[option] is undefined or !!options[option]
   
   generateId = -> +uniqueId()
   
-  mixin {isEnabled, generateId}
+  _.mixin {isEnabled, generateId}
   return
 )

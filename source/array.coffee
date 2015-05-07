@@ -1,4 +1,4 @@
-{isArray, extend, mixin} = _
+{isArray, extend} = _
 
 nativeSplice = Array::splice
 nativeSlice  = Array::slice
@@ -19,4 +19,4 @@ replaceAll = (container, items) ->
 removeAt = (container, pos, num = 1) ->
   nativeSplice.call(container, pos, num)
 
-mixin {insertAt, replaceAll, removeAt, nativeSlice, nativeSplice}
+_.mixin {insertAt, replaceAll, removeAt, nativeSlice, nativeSplice}
