@@ -15,7 +15,7 @@ gulp.task 'build', ->
   gulp.src('source/manifest.coffee')
   .pipe plumber()
   .pipe preprocess()
-  .pipe iife dependencies: [name: 'lodash', as: '_']
+  .pipe iife(dependencies: [name: 'lodash', as: '_'])
   .pipe concat('yess.coffee')
   .pipe gulp.dest('build')
   .pipe coffee()
