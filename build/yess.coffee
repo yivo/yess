@@ -8,8 +8,7 @@
     factory(root, root._)
   return
 )(this, (root, _) ->
-  {isArray, extend} = _
-  
+  {isArray}    = _
   nativeSplice = Array::splice
   nativeSlice  = Array::slice
   
@@ -91,10 +90,12 @@
       if i is len or path[i] is '.'
         if j > 0
           ret = ret[path[i - j...i]]
-          return ret unless ret # TODO Check own property or by != null ?
+          unless ret?
+            return ret
           j = 0
       else ++j
-    if ret is obj then undefined else ret
+    if ret isnt obj
+      ret
   
   createObject = ->
     obj = {}
@@ -113,5 +114,18 @@
   generateId = -> +uniqueId()
   
   _.mixin {isEnabled, generateId}
+  eachToken = (str, callback) ->
+    len = str.length
+    i   = -1
+    j   = 0
+    while ++i <= len
+      if i is len or str[i] is ' '
+        if j > 0
+          callback(str[i - j...i], str)
+        j = 0
+      else ++j
+    return
+  
+  _.mixin {eachToken}
   return
 )

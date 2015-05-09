@@ -8,10 +8,12 @@ traverseObject = (obj, path) ->
     if i is len or path[i] is '.'
       if j > 0
         ret = ret[path[i - j...i]]
-        return ret unless ret # TODO Check own property or by != null ?
+        unless ret?
+          return ret
         j = 0
     else ++j
-  if ret is obj then undefined else ret
+  if ret isnt obj
+    ret
 
 createObject = ->
   obj = {}

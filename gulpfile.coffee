@@ -11,15 +11,22 @@ plumber     = require 'gulp-plumber'
 
 gulp.task 'default', ['build', 'watch'], ->
 
-gulp.task 'build', ->
+gulp.task 'build', ['concat', 'wrap'], ->
+
+gulp.task 'concat', ->
   gulp.src('source/manifest.coffee')
   .pipe plumber()
   .pipe preprocess()
-  .pipe iife(dependencies: [name: 'lodash', as: '_'])
   .pipe concat('yess.coffee')
   .pipe gulp.dest('build')
-  .pipe coffee()
+  .pipe coffee(bare: yes)
   .pipe concat('yess.js')
+  .pipe gulp.dest('build')
+
+gulp.task 'wrap', ['concat'], ->
+  gulp.src('build/**/*')
+  .pipe plumber()
+  .pipe iife(dependencies: [name: 'lodash', as: '_'])
   .pipe gulp.dest('build')
 
 gulp.task 'build-min', ['build'], ->

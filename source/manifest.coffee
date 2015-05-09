@@ -2,3 +2,4 @@
 # @include function.coffee
 # @include object.coffee
 # @include helpers.coffee
+# @include string.coffee

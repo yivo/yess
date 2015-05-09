@@ -1,5 +1,4 @@
-{isArray, extend} = _
-
+{isArray}    = _
 nativeSplice = Array::splice
 nativeSlice  = Array::slice
 
