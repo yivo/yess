@@ -24,7 +24,7 @@ gulp.task 'build', ->
 
 gulp.task 'build-min', ['build'], ->
   gulp.src('build/yess.js')
-  .pipe uglify(preserveComments: 'all')
+  .pipe uglify()
   .pipe rename('yess.min.js')
   .pipe gulp.dest('build')
 
