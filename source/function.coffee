@@ -30,22 +30,22 @@ bindMethod = (object, methods...) ->
   return
 
 onceMethod = (object, methods...) ->
-  for method in methods
-    method = object[method]
+  for name in methods
+    method = object[name]
 
     wrapper = do (object, method) ->
-      run = no
+      run  = no
       memo = undefined
       ->
         unless run
-          run = yes
+          run  = yes
           memo = method.apply(object, arguments)
 
           # Break references!
           object = method = null
         memo
 
-    object[method] = wrapper
+    object[name] = wrapper
   return
 
 _.mixin {applyWith, onceMethod, bindMethod, debounceMethod, mapMethod}

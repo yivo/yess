@@ -85,11 +85,11 @@
       }
     };
     onceMethod = function() {
-      var k, len1, method, methods, object, wrapper;
+      var k, len1, method, methods, name, object, wrapper;
       object = arguments[0], methods = 2 <= arguments.length ? slice.call(arguments, 1) : [];
       for (k = 0, len1 = methods.length; k < len1; k++) {
-        method = methods[k];
-        method = object[method];
+        name = methods[k];
+        method = object[name];
         wrapper = (function(object, method) {
           var memo, run;
           run = false;
@@ -103,7 +103,7 @@
             return memo;
           };
         })(object, method);
-        object[method] = wrapper;
+        object[name] = wrapper;
       }
     };
     _.mixin({
