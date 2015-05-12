@@ -12,7 +12,7 @@
       factory(root, root._);
     }
   })(this, function(root, _) {
-    var applyWith, bindMethod, createObject, debounceMethod, eachToken, extend, generateId, insertAt, isArray, isEnabled, isFunction, lodashBind, lodashDebounce, mapMethod, nativeSlice, nativeSplice, onceMethod, removeAt, replaceAll, traverseObject, uniqueId;
+    var applyWith, bindMethod, createObject, debounceMethod, eachToken, extend, generateId, getProperty, insertAt, isArray, isEnabled, isFunction, lodashBind, lodashDebounce, mapMethod, nativeSlice, nativeSplice, onceMethod, removeAt, replaceAll, setProperty, traverseObject, uniqueId;
     isArray = _.isArray;
     nativeSplice = Array.prototype.splice;
     nativeSlice = Array.prototype.slice;
@@ -113,13 +113,23 @@
       debounceMethod: debounceMethod,
       mapMethod: mapMethod
     });
-    traverseObject = function(obj, path) {
+    createObject = function() {
+      var i, len, obj;
+      obj = {};
+      i = -1;
+      len = arguments.length;
+      while ((i += 2) < len) {
+        obj[arguments[i - 1]] = arguments[i];
+      }
+      return obj;
+    };
+    traverseObject = getProperty = function(obj, path) {
       var i, j, len, ret;
       ret = obj;
       len = path.length;
       i = -1;
       j = 0;
-      while (++i <= len) {
+      while (++i <= len && (ret != null)) {
         if (i === len || path[i] === '.') {
           if (j > 0) {
             ret = ret[path.slice(i - j, i)];
@@ -136,19 +146,42 @@
         return ret;
       }
     };
-    createObject = function() {
-      var i, len, obj;
-      obj = {};
+    setProperty = function(obj, path, val, expand) {
+      var before, i, j, len, now, prop;
+      if (expand == null) {
+        expand = true;
+      }
+      now = obj;
+      len = path.length;
       i = -1;
-      len = arguments.length;
-      while ((i += 2) < len) {
-        obj[arguments[i - 1]] = arguments[i];
+      j = 0;
+      while (++i <= len) {
+        if (i === len || path[i] === '.') {
+          if (j > 0) {
+            before = now;
+            if (prop && !(now = before[prop])) {
+              if (!expand) {
+                return false;
+              }
+              now = before[prop] = {};
+            }
+            prop = path.slice(i - j, i);
+            j = 0;
+          }
+        } else {
+          ++j;
+        }
+      }
+      if (prop) {
+        now[prop] = val;
       }
       return obj;
     };
     _.mixin({
+      createObject: createObject,
       traverseObject: traverseObject,
-      createObject: createObject
+      setProperty: setProperty,
+      getProperty: getProperty
     });
     extend = _.extend, uniqueId = _.uniqueId;
     isEnabled = function(options, option) {
