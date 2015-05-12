@@ -12,7 +12,7 @@
       factory(root, root._);
     }
   })(this, function(root, _) {
-    var applyWith, bindMethod, createObject, debounceMethod, eachToken, extend, generateId, getProperty, insertAt, isArray, isEnabled, isFunction, lodashBind, lodashDebounce, mapMethod, nativeSlice, nativeSplice, onceMethod, removeAt, replaceAll, setProperty, traverseObject, uniqueId;
+    var applyWith, bindMethod, createObject, debounceMethod, eachToken, extend, generateId, getProperty, insertAt, isArray, isEnabled, isFunction, lodashBind, lodashDebounce, mapMethod, nativeSlice, nativeSplice, onceMethod, overrideConstructor, removeAt, replaceAll, setProperty, traverseObject, uniqueId;
     isArray = _.isArray;
     nativeSplice = Array.prototype.splice;
     nativeSlice = Array.prototype.slice;
@@ -212,6 +212,30 @@
     };
     _.mixin({
       eachToken: eachToken
+    });
+    extend = _.extend;
+    overrideConstructor = function(original, overrides, options) {
+      var overridden, prototype;
+      prototype = original.prototype;
+      overridden = options.before ? function() {
+        overrides.apply(this, arguments);
+        original.apply(this, arguments);
+        return this;
+      } : options.after ? function() {
+        original.apply(this, arguments);
+        overrides.apply(this, arguments);
+        return this;
+      } : options.instead ? function() {
+        overrides.apply(this, arguments);
+        return this;
+      } : void 0;
+      extend(overridden, original);
+      overridden.prototype = prototype;
+      overridden.prototype.constructor = overridden;
+      return overridden;
+    };
+    _.mixin({
+      overrideConstructor: overrideConstructor
     });
   });
 

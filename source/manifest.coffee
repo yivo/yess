@@ -3,3 +3,4 @@
 # @include object.coffee
 # @include helpers.coffee
 # @include string.coffee
+# @include class.coffee
