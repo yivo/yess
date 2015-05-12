@@ -12,7 +12,7 @@
       factory(root, root._);
     }
   })(this, function(root, _) {
-    var applyWith, bindMethod, createObject, debounceMethod, eachToken, extend, generateId, getProperty, insertAt, isArray, isEnabled, isFunction, lodashBind, lodashDebounce, mapMethod, nativeSlice, nativeSplice, onceMethod, overrideConstructor, removeAt, replaceAll, setProperty, traverseObject, uniqueId;
+    var afterConstructor, applyWith, beforeConstructor, bindMethod, createObject, debounceMethod, eachToken, extend, generateId, getProperty, insertAt, insteadConstructor, isArray, isEnabled, isFunction, lodashBind, lodashDebounce, mapMethod, nativeSlice, nativeSplice, onceMethod, overrideConstructor, removeAt, replaceAll, setProperty, traverseObject, uniqueId;
     isArray = _.isArray;
     nativeSplice = Array.prototype.splice;
     nativeSlice = Array.prototype.slice;
@@ -214,18 +214,21 @@
       eachToken: eachToken
     });
     extend = _.extend;
-    overrideConstructor = function(original, overrides, options) {
+    overrideConstructor = function(original, overrides, type) {
       var overridden, prototype;
+      if (type == null) {
+        type = 'before';
+      }
       prototype = original.prototype;
-      overridden = options.before ? function() {
+      overridden = type === 'before' ? function() {
         overrides.apply(this, arguments);
         original.apply(this, arguments);
         return this;
-      } : options.after ? function() {
+      } : type === 'after' ? function() {
         original.apply(this, arguments);
         overrides.apply(this, arguments);
         return this;
-      } : options.instead ? function() {
+      } : type === 'instead' ? function() {
         overrides.apply(this, arguments);
         return this;
       } : void 0;
@@ -234,8 +237,20 @@
       overridden.prototype.constructor = overridden;
       return overridden;
     };
+    beforeConstructor = function(original, overrides) {
+      return overrideConstructor(original, overrides, 'before');
+    };
+    afterConstructor = function(original, overrides) {
+      return overrideConstructor(original, overrides, 'after');
+    };
+    insteadConstructor = function(original, overrides) {
+      return overrideConstructor(original, overrides, 'instead');
+    };
     _.mixin({
-      overrideConstructor: overrideConstructor
+      overrideConstructor: overrideConstructor,
+      beforeConstructor: beforeConstructor,
+      afterConstructor: afterConstructor,
+      insteadConstructor: insteadConstructor
     });
   });
 
