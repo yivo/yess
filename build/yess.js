@@ -159,7 +159,7 @@
         if (i === len || path[i] === '.') {
           if (j > 0) {
             before = now;
-            if (prop && !(now = before[prop])) {
+            if (prop && ((now = before[prop]) == null)) {
               if (!expand) {
                 return false;
               }

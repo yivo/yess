@@ -34,7 +34,7 @@ setProperty = (obj, path, val, expand = yes) ->
     if i is len or path[i] is '.'
       if j > 0
         before = now
-        if prop and !(now = before[prop])
+        if prop and !(now = before[prop])?
           return no unless expand
           now = before[prop] = {}
         prop   = path[i - j...i]
