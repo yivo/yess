@@ -12,7 +12,7 @@
       factory(root, root._);
     }
   })(this, function(root, _) {
-    var afterConstructor, applyWith, beforeConstructor, bindMethod, createObject, debounceMethod, eachToken, extend, generateId, getProperty, insertAt, insteadConstructor, isArray, isEnabled, isFunction, lodashBind, lodashDebounce, mapMethod, nativeSlice, nativeSplice, onceMethod, overrideConstructor, removeAt, replaceAll, setProperty, traverseObject, uniqueId;
+    var afterConstructor, afterFunction, afterMethod, applyWith, beforeConstructor, beforeFunction, beforeMethod, bindMethod, copySuper, createObject, debounceMethod, eachToken, extend, generateId, getProperty, insertAt, insteadConstructor, isArray, isEnabled, isFunction, lodashBind, lodashDebounce, mapMethod, nativeSlice, nativeSplice, onceMethod, overrideConstructor, overrideFunction, overrideMethod, removeAt, replaceAll, setProperty, traverseObject, uniqueId;
     isArray = _.isArray;
     nativeSplice = Array.prototype.splice;
     nativeSlice = Array.prototype.slice;
@@ -214,6 +214,27 @@
       eachToken: eachToken
     });
     extend = _.extend;
+    overrideFunction = function(original, overrides, type) {
+      if (type == null) {
+        type = 'before';
+      }
+      return function() {
+        var ret;
+        switch (type) {
+          case 'before':
+            overrides.apply(this, arguments);
+            ret = original.apply(this, arguments);
+            break;
+          case 'after':
+            ret = original.apply(this, arguments);
+            overrides.apply(this, arguments);
+        }
+        return ret;
+      };
+    };
+    overrideMethod = function(object, method, overrides, type) {
+      return object[method] = overrideFunction(object[method], overrides, type);
+    };
     overrideConstructor = function(original, overrides, type) {
       var overridden, prototype;
       if (type == null) {
@@ -246,11 +267,42 @@
     insteadConstructor = function(original, overrides) {
       return overrideConstructor(original, overrides, 'instead');
     };
+    beforeFunction = function(original, overrides) {
+      return overrideFunction(original, overrides, 'before');
+    };
+    afterFunction = function(original, overrides) {
+      return overrideFunction(original, overrides, 'after');
+    };
+    beforeMethod = function(object, method, overrides) {
+      return overrideMethod(object, method, overrides, 'before');
+    };
+    afterMethod = function(object, method, overrides) {
+      return overrideMethod(object, method, overrides, 'after');
+    };
+    copySuper = function(obj) {
+      var copy;
+      if (obj.superCopier !== obj) {
+        if (obj.__super__) {
+          copy = extend({}, obj.__super__);
+          copy.constructor = obj.__super__.constructor;
+          obj.__super__ = copy;
+        } else {
+          obj.__super__ = {};
+        }
+        obj.superCopier = obj;
+      }
+      return obj.__super__;
+    };
     _.mixin({
       overrideConstructor: overrideConstructor,
       beforeConstructor: beforeConstructor,
       afterConstructor: afterConstructor,
-      insteadConstructor: insteadConstructor
+      insteadConstructor: insteadConstructor,
+      beforeFunction: beforeFunction,
+      afterFunction: afterFunction,
+      beforeMethod: beforeMethod,
+      afterMethod: afterMethod,
+      copySuper: copySuper
     });
   });
 
