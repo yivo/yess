@@ -228,6 +228,8 @@
   
   _.mixin {
     overrideConstructor
+    overrideFunction
+    overrideMethod
     beforeConstructor
     afterConstructor
     insteadConstructor

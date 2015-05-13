@@ -295,6 +295,8 @@
     };
     _.mixin({
       overrideConstructor: overrideConstructor,
+      overrideFunction: overrideFunction,
+      overrideMethod: overrideMethod,
       beforeConstructor: beforeConstructor,
       afterConstructor: afterConstructor,
       insteadConstructor: insteadConstructor,

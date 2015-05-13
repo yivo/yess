@@ -76,6 +76,8 @@ copySuper = (obj) ->
 
 _.mixin {
   overrideConstructor
+  overrideFunction
+  overrideMethod
   beforeConstructor
   afterConstructor
   insteadConstructor
