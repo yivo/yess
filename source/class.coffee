@@ -86,4 +86,5 @@ _.mixin {
   beforeMethod
   afterMethod
   copySuper
+  isClass: _.isFunction
 }

@@ -304,7 +304,8 @@
       afterFunction: afterFunction,
       beforeMethod: beforeMethod,
       afterMethod: afterMethod,
-      copySuper: copySuper
+      copySuper: copySuper,
+      isClass: _.isFunction
     });
   });
 

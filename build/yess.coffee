@@ -238,6 +238,7 @@
     beforeMethod
     afterMethod
     copySuper
+    isClass: _.isFunction
   }
   return
 )
