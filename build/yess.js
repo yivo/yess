@@ -12,17 +12,23 @@
       factory(root, root._);
     }
   })(this, function(root, _) {
-    var afterConstructor, afterFunction, afterMethod, applyWith, beforeConstructor, beforeFunction, beforeMethod, bindMethod, copySuper, createObject, debounceMethod, eachToken, extend, generateId, getProperty, insertAt, insteadConstructor, isArray, isEnabled, isFunction, lodashBind, lodashDebounce, mapMethod, nativeSlice, nativeSplice, onceMethod, overrideConstructor, overrideFunction, overrideMethod, removeAt, replaceAll, setProperty, traverseObject, uniqueId;
+    var afterConstructor, afterFunction, afterMethod, applyWith, beforeConstructor, beforeFunction, beforeMethod, bindMethod, copySuper, createObject, debounceMethod, eachToken, extend, generateId, getProperty, insertAt, insertManyAt, insertOneAt, insteadConstructor, isArray, isEnabled, isFunction, lodashBind, lodashDebounce, mapMethod, nativeSlice, nativeSplice, onceMethod, overrideConstructor, overrideFunction, overrideMethod, removeAt, replaceAll, setProperty, traverseObject, uniqueId;
     isArray = _.isArray;
     nativeSplice = Array.prototype.splice;
     nativeSlice = Array.prototype.slice;
-    insertAt = function(container, items, pos) {
-      var collection;
-      collection = isArray(items) && items.length > 1;
-      if (collection) {
+    insertManyAt = function(container, items, pos) {
+      if (items.length) {
         return nativeSplice.apply(container, [pos, 0].concat(items));
+      }
+    };
+    insertOneAt = function(container, item, pos) {
+      return nativeSplice.call(container, pos, 0, item);
+    };
+    insertAt = function(container, items, pos) {
+      if (isArray(items)) {
+        return insertManyAt(container, items, pos);
       } else {
-        return nativeSplice.call(container, pos, 0, items[0] || items);
+        return insertOneAt(container, items, pos);
       }
     };
     replaceAll = function(container, items) {
@@ -40,6 +46,8 @@
     };
     _.mixin({
       insertAt: insertAt,
+      insertOneAt: insertOneAt,
+      insertManyAt: insertManyAt,
       replaceAll: replaceAll,
       removeAt: removeAt,
       nativeSlice: nativeSlice,
