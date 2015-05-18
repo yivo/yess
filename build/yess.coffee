@@ -39,6 +39,7 @@
   
   lodashBind     = _.bind
   lodashDebounce = _.debounce
+  lodashOnce     = _.once
   
   # @see http://jsperf.com/apply-vs-custom-apply
   applyWith = (func, context, args) ->
@@ -59,7 +60,7 @@
       object and object[method]
   
   debounceMethod = (object, method, time, options) ->
-    object[method] = lodashDebounce(lodashBind(object[method], object), time, options)
+    object[method] = lodashDebounce(object[method], time, options)
   
   bindMethod = (object, methods...) ->
     for method in methods
@@ -67,22 +68,8 @@
     return
   
   onceMethod = (object, methods...) ->
-    for name in methods
-      method = object[name]
-  
-      wrapper = do (object, method) ->
-        run  = no
-        memo = undefined
-        ->
-          unless run
-            run  = yes
-            memo = method.apply(object, arguments)
-  
-            # Break references!
-            object = method = null
-          memo
-  
-      object[name] = wrapper
+    for method in methods
+      object[method] = lodashOnce(object[method])
     return
   
   _.mixin {applyWith, onceMethod, bindMethod, debounceMethod, mapMethod}

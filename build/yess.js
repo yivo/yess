@@ -12,7 +12,7 @@
       factory(root, root._);
     }
   })(this, function(root, _) {
-    var afterConstructor, afterFunction, afterMethod, applyWith, beforeConstructor, beforeFunction, beforeMethod, bindMethod, copySuper, createObject, debounceMethod, eachToken, extend, generateId, getProperty, insertAt, insertManyAt, insertOneAt, insteadConstructor, isArray, isEnabled, isFunction, lodashBind, lodashDebounce, mapMethod, nativeSlice, nativeSplice, onceMethod, overrideConstructor, overrideFunction, overrideMethod, removeAt, replaceAll, setProperty, traverseObject, uniqueId;
+    var afterConstructor, afterFunction, afterMethod, applyWith, beforeConstructor, beforeFunction, beforeMethod, bindMethod, copySuper, createObject, debounceMethod, eachToken, extend, generateId, getProperty, insertAt, insertManyAt, insertOneAt, insteadConstructor, isArray, isEnabled, isFunction, lodashBind, lodashDebounce, lodashOnce, mapMethod, nativeSlice, nativeSplice, onceMethod, overrideConstructor, overrideFunction, overrideMethod, removeAt, replaceAll, setProperty, traverseObject, uniqueId;
     isArray = _.isArray;
     nativeSplice = Array.prototype.splice;
     nativeSlice = Array.prototype.slice;
@@ -56,6 +56,7 @@
     isFunction = _.isFunction, extend = _.extend;
     lodashBind = _.bind;
     lodashDebounce = _.debounce;
+    lodashOnce = _.once;
     applyWith = function(func, context, args) {
       var arg1, arg2, arg3;
       arg1 = args[0];
@@ -82,7 +83,7 @@
       }
     };
     debounceMethod = function(object, method, time, options) {
-      return object[method] = lodashDebounce(lodashBind(object[method], object), time, options);
+      return object[method] = lodashDebounce(object[method], time, options);
     };
     bindMethod = function() {
       var k, len1, method, methods, object;
@@ -93,25 +94,11 @@
       }
     };
     onceMethod = function() {
-      var k, len1, method, methods, name, object, wrapper;
+      var k, len1, method, methods, object;
       object = arguments[0], methods = 2 <= arguments.length ? slice.call(arguments, 1) : [];
       for (k = 0, len1 = methods.length; k < len1; k++) {
-        name = methods[k];
-        method = object[name];
-        wrapper = (function(object, method) {
-          var memo, run;
-          run = false;
-          memo = void 0;
-          return function() {
-            if (!run) {
-              run = true;
-              memo = method.apply(object, arguments);
-              object = method = null;
-            }
-            return memo;
-          };
-        })(object, method);
-        object[name] = wrapper;
+        method = methods[k];
+        object[method] = lodashOnce(object[method]);
       }
     };
     _.mixin({
