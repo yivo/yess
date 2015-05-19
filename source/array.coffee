@@ -24,4 +24,16 @@ replaceAll = (container, items) ->
 removeAt = (container, pos, num = 1) ->
   nativeSplice.call(container, pos, num)
 
-_.mixin {insertAt, insertOneAt, insertManyAt, replaceAll, removeAt, nativeSlice, nativeSplice}
+equalArrays = (array, other) ->
+  if array is other
+    return true
+
+  if array.length isnt other.length
+    return false
+
+  for item, i in array
+    if item isnt other[i]
+      return false
+  true
+
+_.mixin {insertAt, insertOneAt, insertManyAt, replaceAll, removeAt, equalArrays, nativeSlice, nativeSplice}

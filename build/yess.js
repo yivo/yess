@@ -12,7 +12,7 @@
       factory(root, root._);
     }
   })(this, function(root, _) {
-    var afterConstructor, afterFunction, afterMethod, applyWith, beforeConstructor, beforeFunction, beforeMethod, bindMethod, copySuper, createObject, debounceMethod, eachToken, extend, generateId, getProperty, insertAt, insertManyAt, insertOneAt, insteadConstructor, isArray, isEnabled, isFunction, lodashBind, lodashDebounce, lodashOnce, mapMethod, nativeSlice, nativeSplice, onceMethod, overrideConstructor, overrideFunction, overrideMethod, removeAt, replaceAll, setProperty, traverseObject, uniqueId;
+    var afterConstructor, afterFunction, afterMethod, applyWith, beforeConstructor, beforeFunction, beforeMethod, bindMethod, copySuper, createObject, debounceMethod, eachToken, equalArrays, extend, generateId, getProperty, insertAt, insertManyAt, insertOneAt, insteadConstructor, isArray, isEnabled, isFunction, lodashBind, lodashDebounce, lodashOnce, mapMethod, nativeSlice, nativeSplice, onceMethod, overrideConstructor, overrideFunction, overrideMethod, removeAt, replaceAll, setProperty, traverseObject, uniqueId;
     isArray = _.isArray;
     nativeSplice = Array.prototype.splice;
     nativeSlice = Array.prototype.slice;
@@ -44,12 +44,29 @@
       }
       return nativeSplice.call(container, pos, num);
     };
+    equalArrays = function(array, other) {
+      var i, item, k, len1;
+      if (array === other) {
+        return true;
+      }
+      if (array.length !== other.length) {
+        return false;
+      }
+      for (i = k = 0, len1 = array.length; k < len1; i = ++k) {
+        item = array[i];
+        if (item !== other[i]) {
+          return false;
+        }
+      }
+      return true;
+    };
     _.mixin({
       insertAt: insertAt,
       insertOneAt: insertOneAt,
       insertManyAt: insertManyAt,
       replaceAll: replaceAll,
       removeAt: removeAt,
+      equalArrays: equalArrays,
       nativeSlice: nativeSlice,
       nativeSplice: nativeSplice
     });
