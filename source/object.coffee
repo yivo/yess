@@ -1,30 +1,29 @@
 createObject = ->
   obj = {}
-  i = -1
+  i   = -1
   len = arguments.length
   while (i += 2) < len
     obj[arguments[i - 1]] = arguments[i]
   obj
 
 traverseObject = getProperty = (obj, path) ->
-  ret  = obj
+  _obj = obj
   len  = path.length
   i    = -1
   j    = 0
 
-  while ++i <= len and ret?
+  while ++i <= len and _obj?
     if i is len or path[i] is '.'
       if j > 0
-        ret = ret[path[i - j...i]]
-        unless ret?
-          return ret
+        prop = path[i - j...i]
+        _obj = _obj[prop]
+        return _obj if not _obj?
         j = 0
     else ++j
 
-  if ret isnt obj
-    ret
+  _obj if i > 0
 
-setProperty = (obj, path, val, expand = yes) ->
+setProperty = (obj, path, val) ->
   now = obj
   len = path.length
   i   = -1
@@ -35,7 +34,6 @@ setProperty = (obj, path, val, expand = yes) ->
       if j > 0
         before = now
         if prop and !(now = before[prop])?
-          return no unless expand
           now = before[prop] = {}
         prop   = path[i - j...i]
         j      = 0

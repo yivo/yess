@@ -136,17 +136,18 @@
       return obj;
     };
     traverseObject = getProperty = function(obj, path) {
-      var i, j, len, ret;
-      ret = obj;
+      var _obj, i, j, len, prop;
+      _obj = obj;
       len = path.length;
       i = -1;
       j = 0;
-      while (++i <= len && (ret != null)) {
+      while (++i <= len && (_obj != null)) {
         if (i === len || path[i] === '.') {
           if (j > 0) {
-            ret = ret[path.slice(i - j, i)];
-            if (ret == null) {
-              return ret;
+            prop = path.slice(i - j, i);
+            _obj = _obj[prop];
+            if (_obj == null) {
+              return _obj;
             }
             j = 0;
           }
@@ -154,15 +155,12 @@
           ++j;
         }
       }
-      if (ret !== obj) {
-        return ret;
+      if (i > 0) {
+        return _obj;
       }
     };
-    setProperty = function(obj, path, val, expand) {
+    setProperty = function(obj, path, val) {
       var before, i, j, len, now, prop;
-      if (expand == null) {
-        expand = true;
-      }
       now = obj;
       len = path.length;
       i = -1;
@@ -172,9 +170,6 @@
           if (j > 0) {
             before = now;
             if (prop && ((now = before[prop]) == null)) {
-              if (!expand) {
-                return false;
-              }
               now = before[prop] = {};
             }
             prop = path.slice(i - j, i);
