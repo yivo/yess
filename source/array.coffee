@@ -1,28 +1,30 @@
 {isArray}    = _
 nativeSplice = Array::splice
 nativeSlice  = Array::slice
+nativeSort   = Array::sort
 
-insertManyAt = (container, items, pos) ->
+insertManyAt = (array, items, pos) ->
   if items.length
-    nativeSplice.apply(container, [pos, 0].concat(items))
+    nativeSplice.apply(array, [pos, 0].concat(items))
 
-insertOneAt = (container, item, pos) ->
-  nativeSplice.call(container, pos, 0, item)
+insertOneAt = (array, item, pos) ->
+  nativeSplice.call(array, pos, 0, item)
 
-insertAt = (container, items, pos) ->
+insertAt = (array, items, pos) ->
   if isArray(items)
-    insertManyAt(container, items, pos)
+    insertManyAt(array, items, pos)
   else
-    insertOneAt(container, items, pos)
+    insertOneAt(array, items, pos)
 
-replaceAll = (container, items) ->
+replaceAll = (array, items) ->
   if items and items.length
-    nativeSplice.apply(container, [0, container.length].concat(items))
+    nativeSplice.apply(array, [0, array.length].concat(items))
   else
-    nativeSplice.call(container, 0, container.length)
+    nativeSplice.call(array, 0, array.length)
 
-removeAt = (container, pos, num = 1) ->
-  nativeSplice.call(container, pos, num)
+removeAt = (array, pos, num = 1) ->
+  if pos > -1 and num > 0 and (pos + num) <= array.length
+    nativeSplice.call(array, pos, num)
 
 equalArrays = (array, other) ->
   if array is other
@@ -36,4 +38,9 @@ equalArrays = (array, other) ->
       return false
   true
 
-_.mixin {insertAt, insertOneAt, insertManyAt, replaceAll, removeAt, equalArrays, nativeSlice, nativeSplice}
+_.mixin {
+  insertAt, insertOneAt, insertManyAt,
+  replaceAll, removeAt,
+  equalArrays,
+  nativeSlice, nativeSplice, nativeSort
+}

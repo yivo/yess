@@ -12,37 +12,40 @@
       factory(root, root._);
     }
   })(this, function(root, _) {
-    var afterConstructor, afterFunction, afterMethod, applyWith, beforeConstructor, beforeFunction, beforeMethod, bindMethod, copySuper, createObject, debounceMethod, eachToken, equalArrays, extend, generateId, getProperty, insertAt, insertManyAt, insertOneAt, insteadConstructor, isArray, isEnabled, isFunction, lodashBind, lodashDebounce, lodashOnce, mapMethod, nativeSlice, nativeSplice, onceMethod, overrideConstructor, overrideFunction, overrideMethod, removeAt, replaceAll, setProperty, traverseObject, uniqueId;
+    var afterConstructor, afterFunction, afterMethod, applyWith, beforeConstructor, beforeFunction, beforeMethod, bindMethod, copySuper, createObject, debounceMethod, eachToken, equalArrays, extend, generateId, getProperty, insertAt, insertManyAt, insertOneAt, insteadConstructor, isArray, isEnabled, isFunction, lodashBind, lodashDebounce, lodashOnce, mapMethod, nativeSlice, nativeSort, nativeSplice, onceMethod, overrideConstructor, overrideFunction, overrideMethod, removeAt, replaceAll, setProperty, traverseObject, uniqueId, wasConstructed;
     isArray = _.isArray;
     nativeSplice = Array.prototype.splice;
     nativeSlice = Array.prototype.slice;
-    insertManyAt = function(container, items, pos) {
+    nativeSort = Array.prototype.sort;
+    insertManyAt = function(array, items, pos) {
       if (items.length) {
-        return nativeSplice.apply(container, [pos, 0].concat(items));
+        return nativeSplice.apply(array, [pos, 0].concat(items));
       }
     };
-    insertOneAt = function(container, item, pos) {
-      return nativeSplice.call(container, pos, 0, item);
+    insertOneAt = function(array, item, pos) {
+      return nativeSplice.call(array, pos, 0, item);
     };
-    insertAt = function(container, items, pos) {
+    insertAt = function(array, items, pos) {
       if (isArray(items)) {
-        return insertManyAt(container, items, pos);
+        return insertManyAt(array, items, pos);
       } else {
-        return insertOneAt(container, items, pos);
+        return insertOneAt(array, items, pos);
       }
     };
-    replaceAll = function(container, items) {
+    replaceAll = function(array, items) {
       if (items && items.length) {
-        return nativeSplice.apply(container, [0, container.length].concat(items));
+        return nativeSplice.apply(array, [0, array.length].concat(items));
       } else {
-        return nativeSplice.call(container, 0, container.length);
+        return nativeSplice.call(array, 0, array.length);
       }
     };
-    removeAt = function(container, pos, num) {
+    removeAt = function(array, pos, num) {
       if (num == null) {
         num = 1;
       }
-      return nativeSplice.call(container, pos, num);
+      if (pos > -1 && num > 0 && (pos + num) <= array.length) {
+        return nativeSplice.call(array, pos, num);
+      }
     };
     equalArrays = function(array, other) {
       var i, item, k, len1;
@@ -68,7 +71,8 @@
       removeAt: removeAt,
       equalArrays: equalArrays,
       nativeSlice: nativeSlice,
-      nativeSplice: nativeSplice
+      nativeSplice: nativeSplice,
+      nativeSort: nativeSort
     });
     isFunction = _.isFunction, extend = _.extend;
     lodashBind = _.bind;
@@ -118,12 +122,17 @@
         object[method] = lodashOnce(object[method]);
       }
     };
+    wasConstructed = function(obj) {
+      var ref;
+      return (ref = obj.constructor) !== Object && ref !== Array && ref !== Number && ref !== String && ref !== Boolean;
+    };
     _.mixin({
       applyWith: applyWith,
       onceMethod: onceMethod,
       bindMethod: bindMethod,
       debounceMethod: debounceMethod,
-      mapMethod: mapMethod
+      mapMethod: mapMethod,
+      wasConstructed: wasConstructed
     });
     createObject = function() {
       var i, len, obj;
