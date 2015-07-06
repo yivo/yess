@@ -11,7 +11,7 @@
     } else {
       factory(root, root._);
     }
-  })(this, function(root, _) {
+  })(this, function(__root__, _) {
     var afterConstructor, afterFunction, afterMethod, applyWith, beforeConstructor, beforeFunction, beforeMethod, bindMethod, copySuper, createObject, debounceMethod, eachToken, equalArrays, extend, generateId, getProperty, insertAt, insertManyAt, insertOneAt, insteadConstructor, isArray, isEnabled, isFunction, lodashBind, lodashDebounce, lodashOnce, mapMethod, nativeSlice, nativeSort, nativeSplice, onceMethod, overrideConstructor, overrideFunction, overrideMethod, removeAt, replaceAll, setProperty, traverseObject, uniqueId, wasConstructed;
     isArray = _.isArray;
     nativeSplice = Array.prototype.splice;

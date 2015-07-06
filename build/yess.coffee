@@ -7,7 +7,7 @@
   else
     factory(root, root._)
   return
-)(this, (root, _) ->
+)(this, (__root__, _) ->
   {isArray}    = _
   nativeSplice = Array::splice
   nativeSlice  = Array::slice
