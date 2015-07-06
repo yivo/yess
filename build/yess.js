@@ -40,11 +40,12 @@
       }
     };
     removeAt = function(array, pos, num) {
+      var _num;
       if (num == null) {
-        num = 1;
+        _num = 1;
       }
-      if (pos > -1 && num > 0 && (pos + num) <= array.length) {
-        return nativeSplice.call(array, pos, num);
+      if (pos > -1 && _num > 0 && (pos + _num) <= array.length) {
+        return nativeSplice.call(array, pos, _num);
       }
     };
     equalArrays = function(array, other) {
@@ -122,17 +123,12 @@
         object[method] = lodashOnce(object[method]);
       }
     };
-    wasConstructed = function(obj) {
-      var ref;
-      return (ref = obj.constructor) !== Object && ref !== Array && ref !== Number && ref !== String && ref !== Boolean;
-    };
     _.mixin({
       applyWith: applyWith,
       onceMethod: onceMethod,
       bindMethod: bindMethod,
       debounceMethod: debounceMethod,
-      mapMethod: mapMethod,
-      wasConstructed: wasConstructed
+      mapMethod: mapMethod
     });
     createObject = function() {
       var i, len, obj;
@@ -201,7 +197,7 @@
     });
     extend = _.extend, uniqueId = _.uniqueId;
     isEnabled = function(options, option) {
-      return !options || options[option] === void 0 || !!options[option];
+      return options !== false && (options != null ? options[option] : void 0) !== false;
     };
     generateId = function() {
       return +uniqueId();
@@ -231,19 +227,19 @@
     });
     extend = _.extend;
     overrideFunction = function(original, overrides, type) {
-      if (type == null) {
-        type = 'before';
-      }
+      var _original, _overrides;
+      _overrides = overrides;
+      _original = original;
       return function() {
         var ret;
-        switch (type) {
+        switch (type != null ? type : 'before') {
           case 'before':
-            overrides.apply(this, arguments);
-            ret = original.apply(this, arguments);
+            _overrides.apply(this, arguments);
+            ret = _original.apply(this, arguments);
             break;
           case 'after':
-            ret = original.apply(this, arguments);
-            overrides.apply(this, arguments);
+            ret = _original.apply(this, arguments);
+            _overrides.apply(this, arguments);
         }
         return ret;
       };
@@ -252,24 +248,23 @@
       return object[method] = overrideFunction(object[method], overrides, type);
     };
     overrideConstructor = function(original, overrides, type) {
-      var overridden, prototype;
-      if (type == null) {
-        type = 'before';
-      }
-      prototype = original.prototype;
-      overridden = type === 'before' ? function() {
-        overrides.apply(this, arguments);
-        original.apply(this, arguments);
+      var _original, _overrides, overridden, prototype;
+      _original = original;
+      _overrides = overrides;
+      prototype = _original.prototype;
+      overridden = (type == null) || type === 'before' ? function() {
+        _overrides.apply(this, arguments);
+        _original.apply(this, arguments);
         return this;
       } : type === 'after' ? function() {
-        original.apply(this, arguments);
-        overrides.apply(this, arguments);
+        _original.apply(this, arguments);
+        _overrides.apply(this, arguments);
         return this;
       } : type === 'instead' ? function() {
-        overrides.apply(this, arguments);
+        _overrides.apply(this, arguments);
         return this;
       } : void 0;
-      extend(overridden, original);
+      extend(overridden, _original);
       overridden.prototype = prototype;
       overridden.prototype.constructor = overridden;
       return overridden;
@@ -309,6 +304,10 @@
       }
       return obj.__super__;
     };
+    wasConstructed = function(obj) {
+      var ref;
+      return (obj != null) && ((ref = obj.constructor) !== Object && ref !== Array && ref !== Number && ref !== String && ref !== Boolean);
+    };
     _.mixin({
       overrideConstructor: overrideConstructor,
       overrideFunction: overrideFunction,
@@ -321,6 +320,7 @@
       beforeMethod: beforeMethod,
       afterMethod: afterMethod,
       copySuper: copySuper,
+      wasConstructed: wasConstructed,
       isClass: _.isFunction
     });
   });

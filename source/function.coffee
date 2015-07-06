@@ -35,8 +35,4 @@ onceMethod = (object, methods...) ->
     object[method] = lodashOnce(object[method])
   return
 
-# http://stackoverflow.com/questions/23570355/how-to-determine-if-variable-was-instantiated-using-new
-wasConstructed = (obj) ->
-  obj.constructor not in [Object, Array, Number, String, Boolean]
-
-_.mixin {applyWith, onceMethod, bindMethod, debounceMethod, mapMethod, wasConstructed}
+_.mixin {applyWith, onceMethod, bindMethod, debounceMethod, mapMethod}

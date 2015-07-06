@@ -1,7 +1,7 @@
 {extend, uniqueId} = _
 
 isEnabled = (options, option) ->
-  !options or options[option] is undefined or !!options[option]
+  options isnt false and options?[option] isnt false
 
 generateId = -> +uniqueId()
 

@@ -1,41 +1,46 @@
 {extend} = _
 
-overrideFunction = (original, overrides, type = 'before') ->
+overrideFunction = (original, overrides, type) ->
+  _overrides = overrides
+  _original  = original
   ->
-    switch type
+    switch type ? 'before'
       when 'before'
-        overrides.apply(this, arguments)
-        ret = original.apply(this, arguments)
+        _overrides.apply(this, arguments)
+        ret = _original.apply(this, arguments)
       when 'after'
-        ret = original.apply(this, arguments)
-        overrides.apply(this, arguments)
+        ret = _original.apply(this, arguments)
+        _overrides.apply(this, arguments)
     ret
 
 overrideMethod = (object, method, overrides, type) ->
   object[method] = overrideFunction(object[method], overrides, type)
 
-overrideConstructor = (original, overrides, type = 'before') ->
-  prototype = original.prototype
+overrideConstructor = (original, overrides, type) ->
+  # Don't lock arguments in closures. Lock local variables instead
+  _original  = original
+  _overrides = overrides
+  prototype  = _original.prototype
 
-  overridden = if type is 'before'
+  overridden = if not type? or type is 'before'
     ->
-      overrides.apply(this, arguments)
-      original.apply(this, arguments)
+      _overrides.apply(this, arguments)
+      _original.apply(this, arguments)
       this
 
   else if type is 'after'
     ->
-      original.apply(this, arguments)
-      overrides.apply(this, arguments)
+      _original.apply(this, arguments)
+      _overrides.apply(this, arguments)
       this
 
   else if type is 'instead'
     ->
-      overrides.apply(this, arguments)
+      _overrides.apply(this, arguments)
       this
 
   # Migrate class members
-  extend(overridden, original);
+  extend(overridden, _original)
 
   # Migrate prototype
   overridden.prototype = prototype
@@ -74,6 +79,10 @@ copySuper = (obj) ->
     obj.superCopier = obj
   obj.__super__
 
+# http://stackoverflow.com/questions/23570355/how-to-determine-if-variable-was-instantiated-using-new
+wasConstructed = (obj) ->
+  obj? and obj.constructor not in [Object, Array, Number, String, Boolean]
+
 _.mixin {
   overrideConstructor
   overrideFunction
@@ -86,5 +95,6 @@ _.mixin {
   beforeMethod
   afterMethod
   copySuper
+  wasConstructed
   isClass: _.isFunction
 }

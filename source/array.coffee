@@ -22,9 +22,10 @@ replaceAll = (array, items) ->
   else
     nativeSplice.call(array, 0, array.length)
 
-removeAt = (array, pos, num = 1) ->
-  if pos > -1 and num > 0 and (pos + num) <= array.length
-    nativeSplice.call(array, pos, num)
+removeAt = (array, pos, num) ->
+  _num = 1 unless num?
+  if pos > -1 and _num > 0 and (pos + _num) <= array.length
+    nativeSplice.call(array, pos, _num)
 
 equalArrays = (array, other) ->
   if array is other
