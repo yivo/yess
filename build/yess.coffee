@@ -233,12 +233,13 @@
   
   copySuper = (obj) ->
     if obj.superCopier isnt obj
+      copy = {}
       if obj.__super__
-        copy = extend({}, obj.__super__)
+        extend(copy, obj.__super__)
         copy.constructor = obj.__super__.constructor
-        obj.__super__ = copy
-      else
-        obj.__super__ = {}
+        copy.__proto__   = obj.__super__.__proto__
+  
+      obj.__super__   = copy
       obj.superCopier = obj
     obj.__super__
   
