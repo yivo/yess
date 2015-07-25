@@ -1,0 +1,22 @@
+{
+  "name": "yess",
+  "version": "1.0.0",
+  "homepage": "https://github.com/yivo/yess",
+  "authors": [
+    "Yaroslav Konoplov <yaroslav@inbox.com>"
+  ],
+  "description": "Useful lodash extends",
+  "main": "build/yess.js",
+  "license": "MIT",
+  "ignore": [
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "spec",
+    "coffeespec",
+    "source",
+    "gulpfile.*",
+    "README.md"
+  ]
+}

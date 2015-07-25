@@ -22,12 +22,6 @@ gulp.task 'build', ->
   .pipe concat('yess.js')
   .pipe gulp.dest('build')
 
-gulp.task 'build-min', ['build'], ->
-  gulp.src('build/yess.js')
-  .pipe uglify()
-  .pipe rename('yess.min.js')
-  .pipe gulp.dest('build')
-
 gulp.task 'watch', ->
   gulp.watch 'source/**/*', ['build']
 

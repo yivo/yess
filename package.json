@@ -1,7 +1,7 @@
 {
   "name": "yess",
   "version": "1.0.0",
-  "description": "",
+  "description": "Useful lodash extends",
   "main": "build/yess.js",
   "scripts": {
     "test": "gulp build coffeespec && jasmine"
@@ -25,6 +25,6 @@
     "preprocess": "^2.1.1"
   },
   "dependencies": {
-    "lodash": "^3.6.0"
+    "lodash": "^3.10.0"
   }
 }
