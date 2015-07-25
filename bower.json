@@ -16,7 +16,6 @@
     "spec",
     "coffeespec",
     "source",
-    "gulpfile.*",
-    "README.md"
+    "gulpfile.*"
   ]
 }
