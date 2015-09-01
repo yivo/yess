@@ -355,9 +355,6 @@
         var arg, args, changesExist, classScope, i, instanceScope, isArrayValue, isDefinedValue, isObjectValue, length, members, ownerFlag, value;
         classScope = scope === 'ClassMembers';
         instanceScope = scope === 'InstanceMembers';
-        if (!(classScope || instanceScope)) {
-          throw new Error('[CoffeeConcerns] Invalid scope');
-        }
         members = classScope ? Class : Class.prototype;
         value = members[member];
         isDefinedValue = value != null;

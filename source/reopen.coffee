@@ -4,12 +4,8 @@ do ->
   hasOwnProp = {}.hasOwnProperty
 
   baseReopen = (Class, scope, allowFunctions, member, changes) ->
-    classScope    = scope is 'ClassMembers'
-    instanceScope = scope is 'InstanceMembers'
-
-    unless classScope or instanceScope
-      throw new Error('[CoffeeConcerns] Invalid scope')
-
+    classScope      = scope is 'ClassMembers'
+    instanceScope   = scope is 'InstanceMembers'
     members         = if classScope then Class else Class.prototype
     value           = members[member]
     isDefinedValue  = value?
