@@ -212,7 +212,7 @@ describe('Property when reopened', function() {
       return expect(Foo.prototype.array).toEqual([1, 2, 3]);
     });
   });
-  return describe('through reopenObject', function() {
+  describe('through reopenObject', function() {
     return it('should set empty object when it is not defined', function() {
       var Foo;
       Foo = (function() {
@@ -227,6 +227,55 @@ describe('Property when reopened', function() {
       })();
       return expect(Foo.prototype.object).toEqual({
         val: 1
+      });
+    });
+  });
+  return describe('in class members', function() {
+    return it('should correctly be extended', function() {
+      var Bar, Foo;
+      Foo = (function() {
+        function Foo() {}
+
+        Foo.hash = {
+          foo: 1,
+          bar: 2
+        };
+
+        return Foo;
+
+      })();
+      _.reopenClassMember(Foo, 'hash', {
+        baz: 3
+      });
+      Bar = (function(superClass) {
+        extend1(Bar, superClass);
+
+        function Bar() {
+          return Bar.__super__.constructor.apply(this, arguments);
+        }
+
+        return Bar;
+
+      })(Foo);
+      _.reopenClassMember(Bar, 'hash', {
+        baz: 4
+      });
+      expect(Foo.hash).toEqual({
+        foo: 1,
+        bar: 2,
+        baz: 3
+      });
+      expect(Bar.hash).toEqual({
+        foo: 1,
+        bar: 2,
+        baz: 4
+      });
+      _.reopenClassMember(Foo, 'hash', 17);
+      expect(Foo.hash).toEqual(17);
+      return expect(Bar.hash).toEqual({
+        foo: 1,
+        bar: 2,
+        baz: 4
       });
     });
   });

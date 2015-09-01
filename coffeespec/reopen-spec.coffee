@@ -100,3 +100,25 @@ describe 'Property when reopened', ->
         @reopenObject 'object', val: 1
 
       expect(Foo::object).toEqual val: 1
+
+  describe 'in class members', ->
+
+    it 'should correctly be extended', ->
+      class Foo
+        @hash:
+          foo: 1
+          bar: 2
+
+      _.reopenClassMember Foo, 'hash', baz: 3
+
+      class Bar extends Foo
+
+      _.reopenClassMember Bar, 'hash', baz: 4
+
+      expect(Foo.hash).toEqual foo: 1, bar: 2, baz: 3
+
+      expect(Bar.hash).toEqual foo: 1, bar: 2, baz: 4
+
+      _.reopenClassMember Foo, 'hash', 17
+      expect(Foo.hash).toEqual 17
+      expect(Bar.hash).toEqual foo: 1, bar: 2, baz: 4
