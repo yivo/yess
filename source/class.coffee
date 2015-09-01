@@ -1,101 +1,102 @@
-{extend} = _
+do ->
+  {extend} = _
 
-overrideFunction = (original, overrides, type) ->
-  _overrides = overrides
-  _original  = original
-  ->
-    switch type ? 'before'
-      when 'before'
+  overrideFunction = (original, overrides, type) ->
+    _overrides = overrides
+    _original  = original
+    ->
+      switch type ? 'before'
+        when 'before'
+          _overrides.apply(this, arguments)
+          ret = _original.apply(this, arguments)
+        when 'after'
+          ret = _original.apply(this, arguments)
+          _overrides.apply(this, arguments)
+      ret
+
+  overrideMethod = (object, method, overrides, type) ->
+    object[method] = overrideFunction(object[method], overrides, type)
+
+  overrideConstructor = (original, overrides, type) ->
+    # Don't lock arguments in closures. Lock local variables instead
+    _original  = original
+    _overrides = overrides
+    prototype  = _original.prototype
+
+    overridden = if not type? or type is 'before'
+      ->
         _overrides.apply(this, arguments)
-        ret = _original.apply(this, arguments)
-      when 'after'
-        ret = _original.apply(this, arguments)
+        _original.apply(this, arguments)
+        this
+
+    else if type is 'after'
+      ->
+        _original.apply(this, arguments)
         _overrides.apply(this, arguments)
-    ret
+        this
 
-overrideMethod = (object, method, overrides, type) ->
-  object[method] = overrideFunction(object[method], overrides, type)
+    else if type is 'instead'
+      ->
+        _overrides.apply(this, arguments)
+        this
 
-overrideConstructor = (original, overrides, type) ->
-  # Don't lock arguments in closures. Lock local variables instead
-  _original  = original
-  _overrides = overrides
-  prototype  = _original.prototype
+    # Migrate class members
+    extend(overridden, _original)
 
-  overridden = if not type? or type is 'before'
-    ->
-      _overrides.apply(this, arguments)
-      _original.apply(this, arguments)
-      this
+    # Migrate prototype
+    overridden.prototype = prototype
+    overridden.prototype.constructor = overridden
+    overridden
 
-  else if type is 'after'
-    ->
-      _original.apply(this, arguments)
-      _overrides.apply(this, arguments)
-      this
+  beforeConstructor = (original, overrides) ->
+    overrideConstructor(original, overrides, 'before')
 
-  else if type is 'instead'
-    ->
-      _overrides.apply(this, arguments)
-      this
+  afterConstructor = (original, overrides) ->
+    overrideConstructor(original, overrides, 'after')
 
-  # Migrate class members
-  extend(overridden, _original)
+  insteadConstructor = (original, overrides) ->
+    overrideConstructor(original, overrides, 'instead')
 
-  # Migrate prototype
-  overridden.prototype = prototype
-  overridden.prototype.constructor = overridden
-  overridden
+  beforeFunction = (original, overrides) ->
+    overrideFunction(original, overrides, 'before')
 
-beforeConstructor = (original, overrides) ->
-  overrideConstructor(original, overrides, 'before')
+  afterFunction = (original, overrides) ->
+    overrideFunction(original, overrides, 'after')
 
-afterConstructor = (original, overrides) ->
-  overrideConstructor(original, overrides, 'after')
+  beforeMethod = (object, method, overrides) ->
+    overrideMethod(object, method, overrides, 'before')
 
-insteadConstructor = (original, overrides) ->
-  overrideConstructor(original, overrides, 'instead')
+  afterMethod = (object, method, overrides) ->
+    overrideMethod(object, method, overrides, 'after')
 
-beforeFunction = (original, overrides) ->
-  overrideFunction(original, overrides, 'before')
+  copySuper = (obj) ->
+    if obj.superCopier isnt obj
+      copy = {}
+      if obj.__super__
+        extend(copy, obj.__super__)
+        copy.constructor = obj.__super__.constructor
+        copy.__proto__   = obj.__super__.__proto__
 
-afterFunction = (original, overrides) ->
-  overrideFunction(original, overrides, 'after')
+      obj.__super__   = copy
+      obj.superCopier = obj
+    obj.__super__
 
-beforeMethod = (object, method, overrides) ->
-  overrideMethod(object, method, overrides, 'before')
+  # http://stackoverflow.com/questions/23570355/how-to-determine-if-variable-was-instantiated-using-new
+  wasConstructed = (obj) ->
+    obj? and obj.constructor not in [Object, Array, Number, String, Boolean]
 
-afterMethod = (object, method, overrides) ->
-  overrideMethod(object, method, overrides, 'after')
-
-copySuper = (obj) ->
-  if obj.superCopier isnt obj
-    copy = {}
-    if obj.__super__
-      extend(copy, obj.__super__)
-      copy.constructor = obj.__super__.constructor
-      copy.__proto__   = obj.__super__.__proto__
-
-    obj.__super__   = copy
-    obj.superCopier = obj
-  obj.__super__
-
-# http://stackoverflow.com/questions/23570355/how-to-determine-if-variable-was-instantiated-using-new
-wasConstructed = (obj) ->
-  obj? and obj.constructor not in [Object, Array, Number, String, Boolean]
-
-_.mixin {
-  overrideConstructor
-  overrideFunction
-  overrideMethod
-  beforeConstructor
-  afterConstructor
-  insteadConstructor
-  beforeFunction
-  afterFunction
-  beforeMethod
-  afterMethod
-  copySuper
-  wasConstructed
-  isClass: _.isFunction
-}
+  _.mixin {
+    overrideConstructor
+    overrideFunction
+    overrideMethod
+    beforeConstructor
+    afterConstructor
+    insteadConstructor
+    beforeFunction
+    afterFunction
+    beforeMethod
+    afterMethod
+    copySuper
+    wasConstructed
+    isClass: _.isFunction
+  }

@@ -4,3 +4,4 @@
 # @include helpers.coffee
 # @include string.coffee
 # @include class.coffee
+# @include reopen.coffee
