@@ -1,9 +1,9 @@
 do ->
-  {uniqueId} = _
+  isEnabled = (options, key) ->
+    options isnt false and options?[key] isnt false
 
-  isEnabled = (options, option) ->
-    options isnt false and options?[option] isnt false
+  generateID = do ->
+    n = 0
+    -> ++n
 
-  generateId = -> +uniqueId()
-
-  _.mixin {isEnabled, generateId}
+  _.mixin {isEnabled, generateID}

@@ -1,42 +1,58 @@
-((root, factory) ->
+((factory) ->
+
+  # Browser and WebWorker
+  root = if typeof self is 'object' and self?.self is self
+    self
+
+  # Server
+  else if typeof global is 'object' and global?.global is global
+    global
+
+  # AMD
   if typeof define is 'function' and define.amd
-    define ['lodash'], (_) ->
+    define ['lodash', 'exports'], (_) ->
       factory(root, _)
-  else if typeof module is 'object' && typeof module.exports is 'object'
+
+  # CommonJS
+  else if typeof module is 'object' and module isnt null and
+          module.exports? and typeof module.exports is 'object'
     factory(root, require('lodash'))
+
+  # Browser and the rest
   else
     factory(root, root._)
+
+  # No return value
   return
-)(this, (__root__, _) ->
+
+)((__root__, _) ->
   do ->
-    {isArray}    = _
-    nativeSplice = Array::splice
-    nativeSlice  = Array::slice
-    nativeSort   = Array::sort
+    {isArray, isObject, keys} = _
   
-    insertManyAt = (array, items, pos) ->
-      if items.length
-        nativeSplice.apply(array, [pos, 0].concat(items))
+    insertManyAt = (ary, items, pos) ->
+      if (pos|0) <= items.length
+        ary.splice.apply(ary, [pos|0, 0].concat(items))
   
-    insertOneAt = (array, item, pos) ->
-      nativeSplice.call(array, pos, 0, item)
+    insertOneAt = (ary, item, pos) ->
+      if (pos|0) <= items.length
+        ary.splice(pos|0, 0, item)
   
-    insertAt = (array, items, pos) ->
+    insertAt = (ary, items, pos) ->
       if isArray(items)
-        insertManyAt(array, items, pos)
+        insertManyAt(ary, items, pos|0)
       else
-        insertOneAt(array, items, pos)
+        insertOneAt(ary, items, pos|0)
   
-    replaceAll = (array, items) ->
-      if items and items.length
-        nativeSplice.apply(array, [0, array.length].concat(items))
+    replaceAll = (ary, items) ->
+      if items?.length > 0
+        ary.splice.apply(ary, [0, ary.length].concat(items))
       else
-        nativeSplice.call(array, 0, array.length)
+        ary.splice(0, ary.length)
   
-    removeAt = (array, pos, num) ->
-      _num = 1 unless num?
-      if pos > -1 and _num > 0 and (pos + _num) <= array.length
-        nativeSplice.call(array, pos, _num)
+    removeAt = (ary, pos, num) ->
+      _num = num|0
+      _num = 1 if _num is 0
+      ary.splice(pos, _num) if pos > -1 and _num > 0 and (pos + _num) <= ary.length
   
     equalArrays = (array, other) ->
       if array is other
@@ -50,12 +66,51 @@
           return false
       true
   
+    inGroupsOf = (n, array, iteratee) ->
+      groups = [] unless iteratee
+      l = array.length
+      i = -1
+      while ++i < l
+        j = 0
+        group = []
+        while (++j <= n) and (i + j - 1) < l
+          group.push(array[i + j - 1])
+  
+        if iteratee
+          iteratee(group, array)
+        else
+          groups.push(group) if group.length > 0
+        i = i + j - 2
+      if iteratee then undefined else groups
+  
+    firstOf = (arg) ->
+      if isArray(arg)
+        arg[0] if arg.length > 0
+  
+      else if isObject(arg)
+        _keys = keys(arg)
+        arg[_keys[0]] if _keys.length > 0
+  
+      else arg
+  
+    firstKey = (obj) ->
+      _keys = keys(obj)
+      _keys[0] if _keys.length > 0
+  
+    firstValue = (obj) ->
+      _keys = keys(obj)
+      obj[_keys[0]] if _keys.length > 0
+  
     _.mixin {
+      firstOf, firstKey, firstValue,
+  
       insertAt, insertOneAt, insertManyAt,
+  
       replaceAll, removeAt,
-      equalArrays,
-      nativeSlice, nativeSplice, nativeSort
+  
+      equalArrays, inGroupsOf
     }
+  
   do ->
     {isFunction} = _
   
@@ -145,14 +200,15 @@
   
     _.mixin {createObject, traverseObject, setProperty, getProperty}
   do ->
-    {uniqueId} = _
+    isEnabled = (options, key) ->
+      options isnt false and options?[key] isnt false
   
-    isEnabled = (options, option) ->
-      options isnt false and options?[option] isnt false
+    generateID = do ->
+      n = 0
+      -> ++n
   
-    generateId = -> +uniqueId()
+    _.mixin {isEnabled, generateID}
   
-    _.mixin {isEnabled, generateId}
   do ->
     eachToken = (str, callback) ->
       len = str.length
@@ -269,6 +325,8 @@
       wasConstructed
       isClass: _.isFunction
     }
+  # TODO Refactor this. Make code clean and names shorter
+  
   do ->
     {isFunction, isObject, isArray, extend, clone, copySuper} = _
   
@@ -388,5 +446,7 @@
       define(pr, reopeners[pr])
   
     _.mixin(reopeners)
+  
+  # No global variable export
   return
 )

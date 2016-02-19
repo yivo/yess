@@ -1,3 +1,5 @@
+# TODO Refactor this. Make code clean and names shorter
+
 do ->
   {isFunction, isObject, isArray, extend, clone, copySuper} = _
 

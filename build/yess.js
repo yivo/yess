@@ -1,52 +1,54 @@
 (function() {
   var slice = [].slice;
 
-  (function(root, factory) {
+  (function(factory) {
+    var root;
+    root = typeof self === 'object' && (typeof self !== "undefined" && self !== null ? self.self : void 0) === self ? self : typeof global === 'object' && (typeof global !== "undefined" && global !== null ? global.global : void 0) === global ? global : void 0;
     if (typeof define === 'function' && define.amd) {
-      define(['lodash'], function(_) {
+      define(['lodash', 'exports'], function(_) {
         return factory(root, _);
       });
-    } else if (typeof module === 'object' && typeof module.exports === 'object') {
+    } else if (typeof module === 'object' && module !== null && (module.exports != null) && typeof module.exports === 'object') {
       factory(root, require('lodash'));
     } else {
       factory(root, root._);
     }
-  })(this, function(__root__, _) {
+  })(function(__root__, _) {
     (function() {
-      var equalArrays, insertAt, insertManyAt, insertOneAt, isArray, nativeSlice, nativeSort, nativeSplice, removeAt, replaceAll;
-      isArray = _.isArray;
-      nativeSplice = Array.prototype.splice;
-      nativeSlice = Array.prototype.slice;
-      nativeSort = Array.prototype.sort;
-      insertManyAt = function(array, items, pos) {
-        if (items.length) {
-          return nativeSplice.apply(array, [pos, 0].concat(items));
+      var equalArrays, firstKey, firstOf, firstValue, inGroupsOf, insertAt, insertManyAt, insertOneAt, isArray, isObject, keys, removeAt, replaceAll;
+      isArray = _.isArray, isObject = _.isObject, keys = _.keys;
+      insertManyAt = function(ary, items, pos) {
+        if ((pos | 0) <= items.length) {
+          return ary.splice.apply(ary, [pos | 0, 0].concat(items));
         }
       };
-      insertOneAt = function(array, item, pos) {
-        return nativeSplice.call(array, pos, 0, item);
+      insertOneAt = function(ary, item, pos) {
+        if ((pos | 0) <= items.length) {
+          return ary.splice(pos | 0, 0, item);
+        }
       };
-      insertAt = function(array, items, pos) {
+      insertAt = function(ary, items, pos) {
         if (isArray(items)) {
-          return insertManyAt(array, items, pos);
+          return insertManyAt(ary, items, pos | 0);
         } else {
-          return insertOneAt(array, items, pos);
+          return insertOneAt(ary, items, pos | 0);
         }
       };
-      replaceAll = function(array, items) {
-        if (items && items.length) {
-          return nativeSplice.apply(array, [0, array.length].concat(items));
+      replaceAll = function(ary, items) {
+        if ((items != null ? items.length : void 0) > 0) {
+          return ary.splice.apply(ary, [0, ary.length].concat(items));
         } else {
-          return nativeSplice.call(array, 0, array.length);
+          return ary.splice(0, ary.length);
         }
       };
-      removeAt = function(array, pos, num) {
+      removeAt = function(ary, pos, num) {
         var _num;
-        if (num == null) {
+        _num = num | 0;
+        if (_num === 0) {
           _num = 1;
         }
-        if (pos > -1 && _num > 0 && (pos + _num) <= array.length) {
-          return nativeSplice.call(array, pos, _num);
+        if (pos > -1 && _num > 0 && (pos + _num) <= ary.length) {
+          return ary.splice(pos, _num);
         }
       };
       equalArrays = function(array, other) {
@@ -65,16 +67,74 @@
         }
         return true;
       };
+      inGroupsOf = function(n, array, iteratee) {
+        var group, groups, i, j, l;
+        if (!iteratee) {
+          groups = [];
+        }
+        l = array.length;
+        i = -1;
+        while (++i < l) {
+          j = 0;
+          group = [];
+          while ((++j <= n) && (i + j - 1) < l) {
+            group.push(array[i + j - 1]);
+          }
+          if (iteratee) {
+            iteratee(group, array);
+          } else {
+            if (group.length > 0) {
+              groups.push(group);
+            }
+          }
+          i = i + j - 2;
+        }
+        if (iteratee) {
+          return void 0;
+        } else {
+          return groups;
+        }
+      };
+      firstOf = function(arg) {
+        var _keys;
+        if (isArray(arg)) {
+          if (arg.length > 0) {
+            return arg[0];
+          }
+        } else if (isObject(arg)) {
+          _keys = keys(arg);
+          if (_keys.length > 0) {
+            return arg[_keys[0]];
+          }
+        } else {
+          return arg;
+        }
+      };
+      firstKey = function(obj) {
+        var _keys;
+        _keys = keys(obj);
+        if (_keys.length > 0) {
+          return _keys[0];
+        }
+      };
+      firstValue = function(obj) {
+        var _keys;
+        _keys = keys(obj);
+        if (_keys.length > 0) {
+          return obj[_keys[0]];
+        }
+      };
       return _.mixin({
+        firstOf: firstOf,
+        firstKey: firstKey,
+        firstValue: firstValue,
         insertAt: insertAt,
         insertOneAt: insertOneAt,
         insertManyAt: insertManyAt,
         replaceAll: replaceAll,
         removeAt: removeAt,
         equalArrays: equalArrays,
-        nativeSlice: nativeSlice,
-        nativeSplice: nativeSplice,
-        nativeSort: nativeSort
+        inGroupsOf: inGroupsOf
       });
     })();
     (function() {
@@ -211,17 +271,20 @@
       });
     })();
     (function() {
-      var generateId, isEnabled, uniqueId;
-      uniqueId = _.uniqueId;
-      isEnabled = function(options, option) {
-        return options !== false && (options != null ? options[option] : void 0) !== false;
+      var generateID, isEnabled;
+      isEnabled = function(options, key) {
+        return options !== false && (options != null ? options[key] : void 0) !== false;
       };
-      generateId = function() {
-        return +uniqueId();
-      };
+      generateID = (function() {
+        var n;
+        n = 0;
+        return function() {
+          return ++n;
+        };
+      })();
       return _.mixin({
         isEnabled: isEnabled,
-        generateId: generateId
+        generateID: generateID
       });
     })();
     (function() {
@@ -348,7 +411,7 @@
       });
     })();
     (function() {
-      var allowFunctions, baseReopen, clone, copySuper, createReopener, define, extend, hasOwnProp, isArray, isFunction, isObject, k, l, len1, len2, len3, m, name, pr, ref, ref1, ref2, reopeners, scope;
+      var allowFunctions, baseReopen, clone, copySuper, createReopener, define, extend, hasOwnProp, isArray, isFunction, isObject, k, len1, len2, len3, m, name, o, pr, ref, ref1, ref2, reopeners, scope;
       isFunction = _.isFunction, isObject = _.isObject, isArray = _.isArray, extend = _.extend, clone = _.clone, copySuper = _.copySuper;
       hasOwnProp = {}.hasOwnProperty;
       baseReopen = function(Class, scope, allowFunctions, member, changes) {
@@ -430,8 +493,8 @@
       for (k = 0, len1 = ref.length; k < len1; k++) {
         scope = ref[k];
         ref1 = [true, false];
-        for (l = 0, len2 = ref1.length; l < len2; l++) {
-          allowFunctions = ref1[l];
+        for (m = 0, len2 = ref1.length; m < len2; m++) {
+          allowFunctions = ref1[m];
           name = "reopen" + (scope.slice(0, -1));
           if (allowFunctions) {
             name += 'With';
@@ -471,8 +534,8 @@
         }
       };
       ref2 = ['reopen', 'reopenWith', 'reopenObject', 'reopenArray'];
-      for (m = 0, len3 = ref2.length; m < len3; m++) {
-        pr = ref2[m];
+      for (o = 0, len3 = ref2.length; o < len3; o++) {
+        pr = ref2[o];
         define(pr, reopeners[pr]);
       }
       return _.mixin(reopeners);
