@@ -377,13 +377,22 @@
         return overrideMethod(object, method, overrides, 'after');
       };
       copySuper = function(obj) {
-        var copy;
+        var copy, ctor;
         if (obj.superCopier !== obj) {
-          copy = {};
           if (obj.__super__) {
-            extend(copy, obj.__super__);
+            if (Object.create) {
+              copy = Object.create(obj.__super__);
+            } else {
+              copy = extend({}, obj.__super__);
+              ctor = function() {
+                return this.constructor = copy;
+              };
+              ctor.prototype = obj.__super__.prototype;
+              copy.prototype = new ctor();
+            }
             copy.constructor = obj.__super__.constructor;
-            copy.__proto__ = obj.__super__.__proto__;
+          } else {
+            copy = {};
           }
           obj.__super__ = copy;
           obj.superCopier = obj;
