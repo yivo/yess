@@ -18,12 +18,12 @@
       var equalArrays, firstKey, firstOf, firstValue, inGroupsOf, insertAt, insertManyAt, insertOneAt, isArray, isObject, keys, removeAt, replaceAll;
       isArray = _.isArray, isObject = _.isObject, keys = _.keys;
       insertManyAt = function(ary, items, pos) {
-        if ((pos | 0) <= items.length) {
+        if ((pos | 0) <= ary.length) {
           return ary.splice.apply(ary, [pos | 0, 0].concat(items));
         }
       };
       insertOneAt = function(ary, item, pos) {
-        if ((pos | 0) <= items.length) {
+        if ((pos | 0) <= ary.length) {
           return ary.splice(pos | 0, 0, item);
         }
       };

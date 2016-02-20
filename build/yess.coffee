@@ -30,11 +30,11 @@
     {isArray, isObject, keys} = _
   
     insertManyAt = (ary, items, pos) ->
-      if (pos|0) <= items.length
+      if (pos|0) <= ary.length
         ary.splice.apply(ary, [pos|0, 0].concat(items))
   
     insertOneAt = (ary, item, pos) ->
-      if (pos|0) <= items.length
+      if (pos|0) <= ary.length
         ary.splice(pos|0, 0, item)
   
     insertAt = (ary, items, pos) ->
