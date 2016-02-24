@@ -12,10 +12,10 @@ plumber     = require 'gulp-plumber'
 gulp.task 'default', ['build', 'watch'], ->
 
 gulp.task 'build', ->
-  gulp.src('source/manifest.coffee')
+  gulp.src('source/__manifest__.coffee')
   .pipe plumber()
   .pipe preprocess()
-  .pipe iife(dependencies: [require: 'lodash', global: '_'])
+  .pipe iife(dependencies: [require: 'lodash', global: '_'], global: '_')
   .pipe concat('yess.coffee')
   .pipe gulp.dest('build')
   .pipe coffee()
@@ -32,7 +32,9 @@ gulp.task 'watch', ->
   gulp.watch 'source/**/*', ['build']
 
 gulp.task 'coffeespec', ->
-  del.sync 'spec/**/*.js'
+  del.sync 'spec/**/*'
   gulp.src('coffeespec/**/*.coffee')
-  .pipe coffee(bare: yes)
-  .pipe gulp.dest('spec')
+    .pipe coffee(bare: yes)
+    .pipe gulp.dest('spec')
+  gulp.src('coffeespec/support/jasmine.json')
+    .pipe gulp.dest('spec/support')

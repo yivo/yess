@@ -17,5 +17,8 @@
     "coffeespec",
     "source",
     "gulpfile.*"
-  ]
+  ],
+  "dependencies": {
+    "lodash": "^3.10.0"
+  }
 }

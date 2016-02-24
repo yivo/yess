@@ -6,12 +6,12 @@
     root = typeof self === 'object' && (typeof self !== "undefined" && self !== null ? self.self : void 0) === self ? self : typeof global === 'object' && (typeof global !== "undefined" && global !== null ? global.global : void 0) === global ? global : void 0;
     if (typeof define === 'function' && define.amd) {
       define(['lodash', 'exports'], function(_) {
-        return factory(root, _);
+        return root._ = factory(root, _);
       });
     } else if (typeof module === 'object' && module !== null && (module.exports != null) && typeof module.exports === 'object') {
-      factory(root, require('lodash'));
+      module.exports = factory(root, require('lodash'));
     } else {
-      factory(root, root._);
+      root._ = factory(root, root._);
     }
   })(function(__root__, _) {
     (function() {
@@ -549,6 +549,7 @@
       }
       return _.mixin(reopeners);
     })();
+    return _;
   });
 
 }).call(this);

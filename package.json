@@ -1,12 +1,12 @@
 {
   "name": "yess",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Useful lodash extends",
   "main": "build/yess.js",
   "scripts": {
-    "test": "gulp build coffeespec && jasmine"
+    "test": "gulp build coffeespec && jasmine && rm -rf spec"
   },
-  "author": "Yaroslav Konoplov",
+  "author": "Yaroslav Konoplov <yaroslav@inbox.com>",
   "license": "MIT",
   "devDependencies": {
     "codo": "^2.0.11",

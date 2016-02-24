@@ -11,16 +11,16 @@
   # AMD
   if typeof define is 'function' and define.amd
     define ['lodash', 'exports'], (_) ->
-      factory(root, _)
+      root._ = factory(root, _)
 
   # CommonJS
   else if typeof module is 'object' and module isnt null and
           module.exports? and typeof module.exports is 'object'
-    factory(root, require('lodash'))
+    module.exports = factory(root, require('lodash'))
 
   # Browser and the rest
   else
-    factory(root, root._)
+    root._ = factory(root, root._)
 
   # No return value
   return
@@ -455,6 +455,6 @@
   
     _.mixin(reopeners)
   
-  # No global variable export
-  return
+  _
+  
 )
