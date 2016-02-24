@@ -1,6 +1,6 @@
 {
   "name": "yess",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Useful lodash extends",
   "main": "build/yess.js",
   "scripts": {
