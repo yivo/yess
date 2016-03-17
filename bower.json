@@ -1,6 +1,6 @@
 {
   "name": "yess",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "homepage": "https://github.com/yivo/yess",
   "authors": [
     "Yaroslav Konoplov <yaroslav@inbox.com>"
@@ -19,6 +19,6 @@
     "gulpfile.*"
   ],
   "dependencies": {
-    "lodash": "^3.10.0"
+    "lodash": "^4.5.1"
   }
 }

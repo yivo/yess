@@ -39,7 +39,7 @@ do ->
     true
 
   inGroupsOf = (n, array, iteratee) ->
-    groups = [] unless iteratee
+    groups = [] unless iteratee?
     l = array.length
     i = -1
     while ++i < l
@@ -48,12 +48,12 @@ do ->
       while (++j <= n) and (i + j - 1) < l
         group.push(array[i + j - 1])
 
-      if iteratee
+      if iteratee?
         iteratee(group, array)
       else
         groups.push(group) if group.length > 0
       i = i + j - 2
-    if iteratee then undefined else groups
+    if iteratee? then undefined else groups
 
   firstOf = (arg) ->
     if isArray(arg)

@@ -69,7 +69,7 @@
       };
       inGroupsOf = function(n, array, iteratee) {
         var group, groups, i, j, l;
-        if (!iteratee) {
+        if (iteratee == null) {
           groups = [];
         }
         l = array.length;
@@ -80,7 +80,7 @@
           while ((++j <= n) && (i + j - 1) < l) {
             group.push(array[i + j - 1]);
           }
-          if (iteratee) {
+          if (iteratee != null) {
             iteratee(group, array);
           } else {
             if (group.length > 0) {
@@ -89,7 +89,7 @@
           }
           i = i + j - 2;
         }
-        if (iteratee) {
+        if (iteratee != null) {
           return void 0;
         } else {
           return groups;
