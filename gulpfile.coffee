@@ -1,35 +1,32 @@
-gulp        = require 'gulp'
-connect     = require 'gulp-connect'
-concat      = require 'gulp-concat'
-coffee      = require 'gulp-coffee'
-preprocess  = require 'gulp-preprocess'
-iife        = require 'gulp-iife-wrap'
-uglify      = require 'gulp-uglify'
-rename      = require 'gulp-rename'
-del         = require 'del'
-plumber     = require 'gulp-plumber'
+gulp       = require 'gulp'
+concat     = require 'gulp-concat'
+coffee     = require 'gulp-coffee'
+preprocess = require 'gulp-preprocess'
+iife       = require 'gulp-iife-wrap'
+del        = require 'del'
+plumber    = require 'gulp-plumber'
 
 gulp.task 'default', ['build', 'watch'], ->
 
 gulp.task 'build', ->
+  dependencies = [
+    { global: '_', require: 'lodash' }
+    { global: 'Object',  native: yes }
+    { global: 'Array',  native: yes }
+    { global: 'Number',  native: yes }
+    { global: 'String',  native: yes }
+    { global: 'Boolean',  native: yes }
+  ]
+
   gulp.src('source/__manifest__.coffee')
-  .pipe plumber()
-  .pipe preprocess()
-  .pipe iife(dependencies: [require: 'lodash', global: '_'], global: '_')
-  .pipe concat('yess.coffee')
-  .pipe gulp.dest('build')
-  .pipe coffee()
-  .pipe concat('yess.js')
-  .pipe gulp.dest('build')
-
-gulp.task 'build-min', ['build'], ->
-  gulp.src('build/yess.js')
-  .pipe uglify()
-  .pipe rename('yess.min.js')
-  .pipe gulp.dest('build')
-
-gulp.task 'watch', ->
-  gulp.watch 'source/**/*', ['build']
+    .pipe plumber()
+    .pipe preprocess()
+    .pipe iife({global: '_', dependencies})
+    .pipe concat('yess.coffee')
+    .pipe gulp.dest('build')
+    .pipe coffee()
+    .pipe concat('yess.js')
+    .pipe gulp.dest('build')
 
 gulp.task 'coffeespec', ->
   del.sync 'spec/**/*'
