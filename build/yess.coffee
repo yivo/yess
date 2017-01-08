@@ -1,87 +1,260 @@
 ((factory) ->
 
   # Browser and WebWorker
-  root = if typeof self is 'object' and self?.self is self
+  root = if typeof self is 'object' and self isnt null and self.self is self
     self
 
   # Server
-  else if typeof global is 'object' and global?.global is global
+  else if typeof global is 'object' and global isnt null and global.global is global
     global
 
   # AMD
-  if typeof define is 'function' and define.amd
+  if typeof define is 'function' and typeof define.amd is 'object' and define.amd isnt null
     define ['lodash', 'exports'], (_) ->
-      root._ = factory(root, _)
+      root._ = factory(root, Object, Array, Number, String, Boolean, _)
 
   # CommonJS
   else if typeof module is 'object' and module isnt null and
-          module.exports? and typeof module.exports is 'object'
-    module.exports = factory(root, require('lodash'))
+          typeof module.exports is 'object' and module.exports isnt null
+    module.exports = factory(root, Object, Array, Number, String, Boolean, require('lodash'))
 
   # Browser and the rest
   else
-    root._ = factory(root, root._)
+    root._ = factory(root, Object, Array, Number, String, Boolean, root._)
 
   # No return value
   return
 
-)((__root__, _) ->
+)((__root__, Object, Array, Number, String, Boolean, _) ->
+  equalArrays = (array, other) ->
+    if array is other
+      return true
+  
+    if array.length isnt other.length
+      return false
+  
+    for item, i in array
+      if item isnt other[i]
+        return false
+    true
+    
+  _.mixin {equalArrays}
+  
+  inGroupsOf = (n, array, iteratee) ->
+    groups = []
+    l = array.length
+    i = -1
+    while ++i < l
+      j = 0
+      group = []
+      while (++j <= n) and (i + j - 1) < l
+        group.push(array[i + j - 1])
+      iteratee?(group, array)
+      groups.push(group) if group.length > 0
+      i = i + j - 2
+    groups
+    
+  _.mixin {inGroupsOf}
+  
+  insertOneAt = (ary, item, pos) ->
+    if (pos|0) <= ary.length
+      ary.splice(pos|0, 0, item)
+    ary
+    
+  _.mixin {insertOneAt}
+  
+  insertManyAt = (ary, items, pos) ->
+    if (pos|0) <= ary.length
+      ary.splice.apply(ary, [pos|0, 0].concat(items))
+    ary
+      
+  _.mixin {insertManyAt}
+  
   do ->
-    {isArray, isObject, keys} = _
-  
-    insertManyAt = (ary, items, pos) ->
-      if (pos|0) <= ary.length
-        ary.splice.apply(ary, [pos|0, 0].concat(items))
-  
-    insertOneAt = (ary, item, pos) ->
-      if (pos|0) <= ary.length
-        ary.splice(pos|0, 0, item)
-  
+    {isArray, insertOneAt, insertManyAt} = _
+    
     insertAt = (ary, items, pos) ->
       if isArray(items)
         insertManyAt(ary, items, pos|0)
       else
         insertOneAt(ary, items, pos|0)
+      ary
+        
+    _.mixin {insertAt}
   
-    replaceAll = (ary, items) ->
-      if items?.length > 0
-        ary.splice.apply(ary, [0, ary.length].concat(items))
+  removeAt = (ary, pos, num) ->
+    _num = num|0
+    _num = 1 if _num is 0
+    ary.splice(pos, _num) if pos > -1 and _num > 0 and (pos + _num) <= ary.length
+  
+  _.mixin {removeAt}
+  
+  replaceAll = (ary, items) ->
+    if items?.length > 0
+      ary.splice.apply(ary, [0, ary.length].concat(items))
+    else
+      ary.splice(0, ary.length)
+  
+  _.mixin {replaceAll}
+  
+    
+  do ->
+    {bind} = _
+    
+    bindMethod = (object, methods...) ->
+      for method in methods
+        object[method] = bind(object[method], object)
+      return
+      
+    _.mixin {bindMethod}
+  
+  do ->
+    {debounce} = _
+    
+    debounceMethod = (object, method, time, options) ->
+      object[method] = debounce(object[method], time, options)
+  
+    _.mixin {debounceMethod}
+  
+  _.mixin(isClass: _.isFunction)
+  
+  do ->
+    {isFunction} = _
+    
+    mapMethod = (object, method) ->
+      if isFunction(method)
+        method
       else
-        ary.splice(0, ary.length)
+        object?[method]
   
-    removeAt = (ary, pos, num) ->
-      _num = num|0
-      _num = 1 if _num is 0
-      ary.splice(pos, _num) if pos > -1 and _num > 0 and (pos + _num) <= ary.length
+    _.mixin {mapMethod}
   
-    equalArrays = (array, other) ->
-      if array is other
-        return true
+  do ->
+    {once} = _
+    
+    onceMethod = (object, methods...) ->
+      for method in methods
+        object[method] = once(object[method])
+      return
+      
+    _.mixin {onceMethod}
   
-      if array.length isnt other.length
-        return false
+  do ->
+    {extend} = _
   
-      for item, i in array
-        if item isnt other[i]
-          return false
-      true
-  
-    inGroupsOf = (n, array, iteratee) ->
-      groups = [] unless iteratee?
-      l = array.length
-      i = -1
-      while ++i < l
-        j = 0
-        group = []
-        while (++j <= n) and (i + j - 1) < l
-          group.push(array[i + j - 1])
-  
-        if iteratee?
-          iteratee(group, array)
+    privatizeSuperclass = (Class) ->
+      if Class.__super__? and not Class.__superclassPrivatized__
+        
+        if Object.create?
+          copy = Object.create(Class.__super__)
         else
-          groups.push(group) if group.length > 0
-        i = i + j - 2
-      if iteratee? then undefined else groups
+          copy = extend({}, Class.__super__)
+          ctor = -> @constructor = copy
+          ctor.prototype = Class.__super__.prototype
+          copy.prototype = new ctor()
+  
+        copy.constructor = Class.__super__.constructor
+  
+        Class.__superclassPrivatized__ = true
+        Class.__super__                = copy
+      return
+      
+    _.mixin {
+      privatizeSuperclass,
+      
+      # COMPATIBILITY: This is old name
+      copySuper: privatizeSuperclass
+    }
+  
+  
+  # _.createObject('foo', 'bar', 'baz', 'qux') => { foo: 'bar', baz: 'qux' }
+  createObject = ->
+    obj = {}
+    idx = -1
+    len = arguments.length
+    while (idx += 2) < len
+      obj[arguments[idx - 1]] = arguments[idx]
+    obj
+  
+  _.mixin {createObject}
+  
+  do ->
+    {keys} = _
+    
+    firstKey = (obj) ->
+      _keys = keys(obj)
+      _keys[0] if _keys.length > 0
+  
+    _.mixin {firstKey}
+  
+  do ->
+    {keys} = _
+  
+    firstValue = (obj) ->
+      _keys = keys(obj)
+      obj[_keys[0]] if _keys.length > 0
+  
+    _.mixin {firstValue}
+  
+  traverseObject = getProperty = (obj, path) ->
+    _obj = obj
+    len  = path.length
+    i    = -1
+    j    = 0
+  
+    while ++i <= len and _obj?
+      if i is len or path[i] is '.'
+        if j > 0
+          prop = path[i - j...i]
+          _obj = _obj[prop]
+          return _obj if not _obj?
+          j = 0
+      else ++j
+  
+    _obj if i > 0
+    
+  _.mixin {traverseObject, getProperty}
+  
+  setProperty = (obj, path, val) ->
+    now = obj
+    len = path.length
+    i   = -1
+    j   = 0
+  
+    while ++i <= len
+      if i is len or path[i] is '.'
+        if j > 0
+          before = now
+          if prop and !(now = before[prop])?
+            now = before[prop] = {}
+          prop   = path[i - j...i]
+          j      = 0
+      else ++j
+  
+    if prop
+      now[prop] = val
+  
+    obj
+  
+  _.mixin {setProperty}
+  
+  
+  # TODO Rename
+  # http://jsperf.com/apply-vs-custom-apply
+  applyWith = (func, context, args) ->
+    switch args.length
+      when 0 then func.call(context)
+      when 1 then func.call(context, args[0])
+      when 2 then func.call(context, args[0], args[1])
+      when 3 then func.call(context, args[0], args[1], args[2])
+      else func.apply(context, args)
+  
+  _.mixin {applyWith}
+  
+  do ->
+    {keys}   = _
+    isArray  = _.isArrayLike  ? _.isArray
+    isObject = _.isObjectLike ? _.isObject
   
     firstOf = (arg) ->
       if isArray(arg)
@@ -93,279 +266,66 @@
   
       else arg
   
-    firstKey = (obj) ->
-      _keys = keys(obj)
-      _keys[0] if _keys.length > 0
+    _.mixin {firstOf}
   
-    firstValue = (obj) ->
-      _keys = keys(obj)
-      obj[_keys[0]] if _keys.length > 0
+  generateID = do ->
+    n = 0
+    -> ++n
   
-    _.mixin {
-      firstOf, firstKey, firstValue,
+  _.mixin {generateID}
   
-      insertAt, insertOneAt, insertManyAt,
+  NATIVES = [Object, Array, Number, String, Boolean]
   
-      replaceAll, removeAt,
+  Object.freeze?(NATIVES)
   
-      equalArrays, inGroupsOf
-    }
+  # http://stackoverflow.com/questions/23570355/how-to-determine-if-variable-was-instantiated-using-new
+  isConstructed = (object) ->
+    object? and object.constructor not in NATIVES
   
-  do ->
-    {isFunction} = _
+  _.mixin {
+    isConstructed,
   
-    lodashBind     = _.bind
-    lodashDebounce = _.debounce
-    lodashOnce     = _.once
+    # COMPATIBILITY: This is old name
+    wasConstructed: isConstructed
+  }
   
-    # @see http://jsperf.com/apply-vs-custom-apply
-    applyWith = (func, context, args) ->
-      length  = args.length
-      arg1    = args[0] if length > 0
-      arg2    = args[1] if length > 1
-      arg3    = args[2] if length > 2
-      switch length
-        when 0 then func.call(context)
-        when 1 then func.call(context, arg1)
-        when 2 then func.call(context, arg1, arg2)
-        when 3 then func.call(context, arg1, arg2, arg3)
-        else func.apply(context, args)
+  isEnabled = (options, optionname) ->
+    options isnt false and options?[optionname] isnt false
   
-    mapMethod = (object, method) ->
-      if isFunction(method)
-        method
-      else
-        object and object[method]
-  
-    debounceMethod = (object, method, time, options) ->
-      object[method] = lodashDebounce(object[method], time, options)
-  
-    bindMethod = (object, methods...) ->
-      for method in methods
-        object[method] = lodashBind(object[method], object)
-      return
-  
-    onceMethod = (object, methods...) ->
-      for method in methods
-        object[method] = lodashOnce(object[method])
-      return
-  
-    _.mixin {applyWith, onceMethod, bindMethod, debounceMethod, mapMethod}
-  do ->
-    createObject = ->
-      obj = {}
-      i   = -1
-      len = arguments.length
-      while (i += 2) < len
-        obj[arguments[i - 1]] = arguments[i]
-      obj
-  
-    traverseObject = getProperty = (obj, path) ->
-      _obj = obj
-      len  = path.length
-      i    = -1
-      j    = 0
-  
-      while ++i <= len and _obj?
-        if i is len or path[i] is '.'
-          if j > 0
-            prop = path[i - j...i]
-            _obj = _obj[prop]
-            return _obj if not _obj?
-            j = 0
-        else ++j
-  
-      _obj if i > 0
-  
-    setProperty = (obj, path, val) ->
-      now = obj
-      len = path.length
-      i   = -1
-      j   = 0
-  
-      while ++i <= len
-        if i is len or path[i] is '.'
-          if j > 0
-            before = now
-            if prop and !(now = before[prop])?
-              now = before[prop] = {}
-            prop   = path[i - j...i]
-            j      = 0
-        else ++j
-  
-      if prop
-        now[prop] = val
-  
-      obj
-  
-    _.mixin {createObject, traverseObject, setProperty, getProperty}
-  do ->
-    isEnabled = (options, key) ->
-      options isnt false and options?[key] isnt false
-  
-    generateID = do ->
-      n = 0
-      -> ++n
-  
-    _.mixin {isEnabled, generateID}
+  _.mixin {isEnabled}
   
   do ->
-    eachToken = (str, callback) ->
-      len = str.length
-      i   = -1
-      j   = 0
-      while ++i <= len
-        if i is len or str[i] is ' '
-          if j > 0
-            callback(str[i - j...i], str)
-          j = 0
-        else ++j
-      return
+    {isFunction, isObject, isArray, extend, clone, privatizeSuperclass} = _
   
-    _.mixin {eachToken}
-  do ->
-    {extend} = _
-  
-    overrideFunction = (original, overrides, type) ->
-      _overrides = overrides
-      _original  = original
-      ->
-        switch type ? 'before'
-          when 'before'
-            _overrides.apply(this, arguments)
-            ret = _original.apply(this, arguments)
-          when 'after'
-            ret = _original.apply(this, arguments)
-            _overrides.apply(this, arguments)
-        ret
-  
-    overrideMethod = (object, method, overrides, type) ->
-      object[method] = overrideFunction(object[method], overrides, type)
-  
-    overrideConstructor = (original, overrides, type) ->
-      # Don't lock arguments in closures. Lock local variables instead
-      _original  = original
-      _overrides = overrides
-      prototype  = _original.prototype
-  
-      overridden = if not type? or type is 'before'
-        ->
-          _overrides.apply(this, arguments)
-          _original.apply(this, arguments)
-          this
-  
-      else if type is 'after'
-        ->
-          _original.apply(this, arguments)
-          _overrides.apply(this, arguments)
-          this
-  
-      else if type is 'instead'
-        ->
-          _overrides.apply(this, arguments)
-          this
-  
-      # Migrate class members
-      extend(overridden, _original)
-  
-      # Migrate prototype
-      overridden.prototype = prototype
-      overridden.prototype.constructor = overridden
-      overridden
-  
-    beforeConstructor = (original, overrides) ->
-      overrideConstructor(original, overrides, 'before')
-  
-    afterConstructor = (original, overrides) ->
-      overrideConstructor(original, overrides, 'after')
-  
-    insteadConstructor = (original, overrides) ->
-      overrideConstructor(original, overrides, 'instead')
-  
-    beforeFunction = (original, overrides) ->
-      overrideFunction(original, overrides, 'before')
-  
-    afterFunction = (original, overrides) ->
-      overrideFunction(original, overrides, 'after')
-  
-    beforeMethod = (object, method, overrides) ->
-      overrideMethod(object, method, overrides, 'before')
-  
-    afterMethod = (object, method, overrides) ->
-      overrideMethod(object, method, overrides, 'after')
-  
-    copySuper = (obj) ->
-      if obj.superCopier isnt obj
-        if obj.__super__
-          if Object.create
-            copy = Object.create(obj.__super__)
-          else
-            copy = extend({}, obj.__super__)
-            ctor = -> @constructor = copy
-            ctor.prototype = obj.__super__.prototype
-            copy.prototype = new ctor()
-  
-          copy.constructor = obj.__super__.constructor
-        else
-          copy = {}
-  
-        obj.__super__   = copy
-        obj.superCopier = obj
-      obj.__super__
-  
-    # http://stackoverflow.com/questions/23570355/how-to-determine-if-variable-was-instantiated-using-new
-    wasConstructed = (obj) ->
-      obj? and obj.constructor not in [Object, Array, Number, String, Boolean]
-  
-    _.mixin {
-      overrideConstructor
-      overrideFunction
-      overrideMethod
-      beforeConstructor
-      afterConstructor
-      insteadConstructor
-      beforeFunction
-      afterFunction
-      beforeMethod
-      afterMethod
-      copySuper
-      wasConstructed
-      isClass: _.isFunction
-    }
-  
-  # TODO Refactor this. Make code clean and names shorter
-  
-  do ->
-    {isFunction, isObject, isArray, extend, clone, copySuper} = _
-  
-    hasOwnProp = {}.hasOwnProperty
+    hasOwnProperty = {}.hasOwnProperty
   
     baseReopen = (Class, scope, allowFunctions, member, changes) ->
-      classScope      = scope is 'ClassMembers'
-      instanceScope   = scope is 'InstanceMembers'
-      members         = if classScope then Class else Class.prototype
-      value           = members[member]
-      isDefinedValue  = value?
-      isObjectValue   = isDefinedValue and isObject(value) and not isArray(value)
-      isArrayValue    = isDefinedValue and not isObjectValue and isArray(value)
-      ownerFlag       = "__#{member}Owner"
-      changesExist    = arguments.length > 4
+      isClassScope       = scope is 'ClassMembers'
+      isInstanceScope    = scope is 'InstanceMembers'
+      members            = if isClassScope then Class else Class.prototype
+      value              = members[member]
+      isDefinedValue     = value?
+      isObjectValue      = isDefinedValue and isObject(value) and not isArray(value)
+      isArrayValue       = isDefinedValue and not isObjectValue and isArray(value)
+      hasOwnPropertyFlag = "__#{member}PropertyOwner"
+      changesExist       = arguments.length > 4
   
-      if instanceScope and isDefinedValue
-        copySuper(Class)[member] = value
+      if Class.__super__? and isInstanceScope and isDefinedValue
+        privatizeSuperclass(Class)
+        Class.__super__[member] = value
   
       if isObjectValue or isArrayValue
   
         # Make own property
   
         # hasOwnProperty does not work on class members as expected
-        if classScope
-          if member[ownerFlag] isnt Class
-            member[ownerFlag] = Class
+        if isClassScope
+          if member[hasOwnPropertyFlag] isnt Class
+            member[hasOwnPropertyFlag] = Class
             value             = clone(value)
             members[member]   = value
   
-        else if not hasOwnProp.call(members, member)
+        else if not hasOwnProperty.call(members, member)
           value           = clone(value)
           members[member] = value
   
@@ -379,81 +339,43 @@
           else if isObject(changes) and not isArray(changes)
             if isObjectValue
               extend(value, changes)
-  
             else if isArrayValue
               value.push(changes)
   
           # Push new items into value
           else if isArrayValue
-            args    = [value.length, 0]
-            i       = 3
-            length  = arguments.length
-  
-            while ++i < length
-              arg = arguments[i]
-              if isArray(arg)
-                args.push.apply(args, arg)
-              else
-                args.push(arg)
-  
+            args = [value.length, 0]
+            idx  = 3
+            len  = arguments.length
+            args.push(arguments[idx]) while ++idx < len
             value.splice.apply(value, args)
-  
           else
             members[member] = value = changes
   
       else if changesExist
         members[member] = value = changes
   
-        if classScope
-          Class[ownerFlag] = Class
+        if isClassScope
+          Class[hasOwnPropertyFlag] = Class
   
       value
   
-    reopeners = {}
+    reopenInstanceMember     = (Class, member, changes...) -> baseReopen([Class, 'InstanceMembers', false, member].concat(changes)...)
+    reopenInstanceMemberWith = (Class, member, changes...) -> baseReopen([Class, 'InstanceMembers', true, member].concat(changes)...)
+    reopenClassMember        = (Class, member, changes...) -> baseReopen([Class, 'ClassMembers', false, member].concat(changes)...)
+    reopenClassMemberWith    = (Class, member, changes...) -> baseReopen([Class, 'ClassMembers', true, member].concat(changes)...)
+    reopenObject             = (Class, member) -> Class::[member] ?= {}; reopenInstanceMember(arguments...)
+    reopenArray              = (Class, member) -> Class::[member] ?= []; reopenInstanceMember(arguments...)
+    reopen                   = reopenInstanceMember
+    reopenWith               = reopenInstanceMemberWith
   
-    createReopener = (scope, allowFunctions) ->
-      _scope          = scope
-      _allowFunctions = allowFunctions
+    Object.defineProperty Function::, 'reopen',       value: -> reopen(this, arguments...)
+    Object.defineProperty Function::, 'reopenWith',   value: -> reopenWith(this, arguments...)
+    Object.defineProperty Function::, 'reopenObject', value: -> reopenObject(this, arguments...)
+    Object.defineProperty Function::, 'reopenArray',  value: -> reopenArray(this, arguments...)
+      
+    _.mixin {reopen, reopenWith, reopenArray, reopenObject, reopenClassMember, reopenClassMemberWith}
   
-      (Class, member, changes) ->
-        len   = arguments.length
-        i     = 0
-        args  = [Class, _scope, _allowFunctions]
-        args.push(arguments[i]) while ++i < len
-        baseReopen.apply(null, args)
-  
-    for scope in ['InstanceMembers', 'ClassMembers']
-      for allowFunctions in [true, false]
-        name = "reopen#{scope.slice(0, -1)}"
-        name += 'With' if allowFunctions
-        reopeners[name] = createReopener(scope, allowFunctions)
-  
-    reopeners.reopen = reopeners.reopenInstanceMember
-    reopeners.reopenWith = reopeners.reopenInstanceMemberWith
-  
-    reopeners.reopenObject = (Class, member) ->
-      Class::[member] ||= {}
-      reopeners.reopenInstanceMember(arguments...)
-  
-    reopeners.reopenArray = (Class, member) ->
-      Class::[member] ||= []
-      reopeners.reopenInstanceMember(arguments...)
-  
-    define = (prop, func) ->
-      unless Function::[prop]
-        _func = func
-        Object.defineProperty Function::, prop, value: ->
-          length  = arguments.length
-          i       = -1
-          args    = Array(length)
-          args[i] = arguments[i] while ++i < length
-          args.unshift(this)
-          _func.apply(null, args)
-  
-    for pr in ['reopen', 'reopenWith', 'reopenObject', 'reopenArray']
-      define(pr, reopeners[pr])
-  
-    _.mixin(reopeners)
   
   _
 )
