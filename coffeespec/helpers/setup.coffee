@@ -1,2 +1,1 @@
-global._ = require('lodash')
-require('../../build/yess.js')
+global._ = require('../../build/yess.js')
