@@ -24,6 +24,5 @@
 # @include utils/generateID.coffee
 # @include utils/isConstructed.coffee
 # @include utils/isEnabled.coffee
-# @include utils/reopen.coffee
 
 _
