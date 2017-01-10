@@ -6,4 +6,4 @@ do ->
       object[method] = bind(object[method], object)
     return
     
-  _.mixin {bindMethod}
+  _.mixin {bindMethod}, chain: false

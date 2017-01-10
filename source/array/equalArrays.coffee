@@ -10,4 +10,4 @@ equalArrays = (array, other) ->
       return false
   true
   
-_.mixin {equalArrays}
+_.mixin {equalArrays}, chain: false

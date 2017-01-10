@@ -11,4 +11,4 @@ _.mixin {
 
   # COMPATIBILITY: This is old name
   wasConstructed: isConstructed
-}
+}, chain: false

@@ -6,4 +6,4 @@ do ->
       object[method] = once(object[method])
     return
     
-  _.mixin {onceMethod}
+  _.mixin {onceMethod}, chain: false

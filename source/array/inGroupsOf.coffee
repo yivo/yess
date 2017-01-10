@@ -12,4 +12,4 @@ inGroupsOf = (n, array, iteratee) ->
     i = i + j - 2
   groups
   
-_.mixin {inGroupsOf}
+_.mixin {inGroupsOf}, chain: false

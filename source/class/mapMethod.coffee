@@ -7,4 +7,4 @@ do ->
     else
       object?[method]
 
-  _.mixin {mapMethod}
+  _.mixin {mapMethod}, chain: false

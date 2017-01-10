@@ -8,4 +8,4 @@ do ->
       insertOneAt(ary, items, pos|0)
     ary
       
-  _.mixin {insertAt}
+  _.mixin {insertAt}, chain: false

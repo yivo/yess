@@ -3,4 +3,4 @@ insertManyAt = (ary, items, pos) ->
     ary.splice.apply(ary, [pos|0, 0].concat(items))
   ary
     
-_.mixin {insertManyAt}
+_.mixin {insertManyAt}, chain: false

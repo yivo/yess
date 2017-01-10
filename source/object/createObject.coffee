@@ -7,4 +7,4 @@ createObject = ->
     obj[arguments[idx - 1]] = arguments[idx]
   obj
 
-_.mixin {createObject}
+_.mixin {createObject}, chain: false

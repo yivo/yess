@@ -19,4 +19,4 @@ setProperty = (obj, path, val) ->
 
   obj
 
-_.mixin {setProperty}
+_.mixin {setProperty}, chain: false

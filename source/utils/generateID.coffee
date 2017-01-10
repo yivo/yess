@@ -2,4 +2,4 @@ generateID = do ->
   n = 0
   -> ++n
 
-_.mixin {generateID}
+_.mixin {generateID}, chain: false

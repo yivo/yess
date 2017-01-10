@@ -23,4 +23,4 @@ do ->
     
     # COMPATIBILITY: This is old name
     copySuper: privatizeSuperclass
-  }
+  }, chain: false

@@ -3,4 +3,4 @@ insertOneAt = (ary, item, pos) ->
     ary.splice(pos|0, 0, item)
   ary
   
-_.mixin {insertOneAt}
+_.mixin {insertOneAt}, chain: false

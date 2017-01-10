@@ -1,1 +1,1 @@
-_.mixin(isClass: _.isFunction)
+_.mixin({isClass: _.isFunction}, chain: false)

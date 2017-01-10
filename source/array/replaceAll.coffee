@@ -4,4 +4,4 @@ replaceAll = (ary, items) ->
   else
     ary.splice(0, ary.length)
 
-_.mixin {replaceAll}
+_.mixin {replaceAll}, chain: false

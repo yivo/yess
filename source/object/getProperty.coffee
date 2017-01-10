@@ -15,4 +15,4 @@ traverseObject = getProperty = (obj, path) ->
 
   _obj if i > 0
   
-_.mixin {traverseObject, getProperty}
+_.mixin {traverseObject, getProperty}, chain: false

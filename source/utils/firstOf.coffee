@@ -13,4 +13,4 @@ do ->
 
     else arg
 
-  _.mixin {firstOf}
+  _.mixin {firstOf}, chain: false

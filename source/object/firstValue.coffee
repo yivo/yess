@@ -5,4 +5,4 @@ do ->
     _keys = keys(obj)
     obj[_keys[0]] if _keys.length > 0
 
-  _.mixin {firstValue}
+  _.mixin {firstValue}, chain: false
