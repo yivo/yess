@@ -1,10 +1,10 @@
 ### Usage
 
 #### In browser environment
-Load `yess` after `lodash`.
+Just load `yess` after `lodash`.
 
 #### In nodejs environment
-Simply require `yess`: `var _ = require('yess');` (Don't need to require lodash)
+`var _ = require('yess');`
 
 ### Testing
-`npm i && npm run test`
+`npm i && npm test`
