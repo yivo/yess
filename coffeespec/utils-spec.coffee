@@ -1,9 +1,9 @@
 describe 'Utils', ->
   
-  it 'applyWith', ->
+  it 'exec', ->
     ret = []
     obj = { set: (args...) -> ret = args.concat(4) }
-    _.applyWith(obj.set, obj, [1,2,3])
+    _.exec(obj.set, obj, [1,2,3])
     expect(ret).toEqual([1,2,3,4])
     
   it 'firstOf', ->

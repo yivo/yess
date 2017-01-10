@@ -19,7 +19,7 @@
 # @include object/getProperty.coffee
 # @include object/setProperty.coffee
 
-# @include utils/applyWith.coffee
+# @include utils/exec.coffee
 # @include utils/firstOf.coffee
 # @include utils/generateID.coffee
 # @include utils/isConstructed.coffee
