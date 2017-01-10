@@ -1,6 +1,6 @@
 describe 'Utils', ->
   
-  it 'appleWith', ->
+  it 'applyWith', ->
     ret = []
     obj = { set: (args...) -> ret = args.concat(4) }
     _.applyWith(obj.set, obj, [1,2,3])

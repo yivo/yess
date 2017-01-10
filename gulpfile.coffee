@@ -10,12 +10,12 @@ gulp.task 'default', ['build', 'watch'], ->
 
 gulp.task 'build', ->
   dependencies = [
-    { global: '_', require: 'lodash' }
-    { global: 'Object',  native: yes }
-    { global: 'Array',  native: yes }
-    { global: 'Number',  native: yes }
-    { global: 'String',  native: yes }
-    { global: 'Boolean',  native: yes }
+    { global: '_',       require: 'lodash' }
+    { global: 'Object',  native:  true }
+    { global: 'Array',   native:  true }
+    { global: 'Number',  native:  true }
+    { global: 'String',  native:  true }
+    { global: 'Boolean', native:  true }
   ]
 
   gulp.src('source/__manifest__.coffee')
@@ -31,7 +31,7 @@ gulp.task 'build', ->
 gulp.task 'coffeespec', ->
   del.sync 'spec/**/*'
   gulp.src('coffeespec/**/*.coffee')
-    .pipe coffee(bare: yes)
+    .pipe coffee(bare: true)
     .pipe gulp.dest('spec')
   gulp.src('coffeespec/support/jasmine.json')
     .pipe gulp.dest('spec/support')

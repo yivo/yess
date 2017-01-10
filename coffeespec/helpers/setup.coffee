@@ -1,1 +1,1 @@
-global._ = require('../../build/yess.js')
+global._ = require('../..')
