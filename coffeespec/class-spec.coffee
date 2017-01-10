@@ -8,14 +8,14 @@ describe 'Class', ->
   it 'debounceMethod', (done) ->
     ary = []
     obj = { push: -> ary.push(1) }
-    _.debounceMethod(obj, 'push', 30)
+    _.debounceMethod(obj, 'push', 1)
     obj.push()
     obj.push()
     obj.push()
-    setTimeout ->
+    expect(ary).toEqual([])
+    _.defer ->
       expect(ary).toEqual([1])
       done()
-    , 30
     
   it 'isClass', ->
     class Class
