@@ -38,7 +38,7 @@
         return false
     true
     
-  _.mixin {equalArrays}
+  _.mixin {equalArrays}, chain: false
   
   inGroupsOf = (n, array, iteratee) ->
     groups = []
@@ -54,21 +54,21 @@
       i = i + j - 2
     groups
     
-  _.mixin {inGroupsOf}
+  _.mixin {inGroupsOf}, chain: false
   
   insertOneAt = (ary, item, pos) ->
     if (pos|0) <= ary.length
       ary.splice(pos|0, 0, item)
     ary
     
-  _.mixin {insertOneAt}
+  _.mixin {insertOneAt}, chain: false
   
   insertManyAt = (ary, items, pos) ->
     if (pos|0) <= ary.length
       ary.splice.apply(ary, [pos|0, 0].concat(items))
     ary
       
-  _.mixin {insertManyAt}
+  _.mixin {insertManyAt}, chain: false
   
   do ->
     {isArray, insertOneAt, insertManyAt} = _
@@ -80,14 +80,14 @@
         insertOneAt(ary, items, pos|0)
       ary
         
-    _.mixin {insertAt}
+    _.mixin {insertAt}, chain: false
   
   removeAt = (ary, pos, num) ->
     _num = num|0
     _num = 1 if _num is 0
     ary.splice(pos, _num) if pos > -1 and _num > 0 and (pos + _num) <= ary.length
   
-  _.mixin {removeAt}
+  _.mixin {removeAt}, chain: false
   
   replaceAll = (ary, items) ->
     if items?.length > 0
@@ -95,7 +95,7 @@
     else
       ary.splice(0, ary.length)
   
-  _.mixin {replaceAll}
+  _.mixin {replaceAll}, chain: false
   
     
   do ->
@@ -106,7 +106,7 @@
         object[method] = bind(object[method], object)
       return
       
-    _.mixin {bindMethod}
+    _.mixin {bindMethod}, chain: false
   
   do ->
     {debounce} = _
@@ -114,9 +114,9 @@
     debounceMethod = (object, method, time, options) ->
       object[method] = debounce(object[method], time, options)
   
-    _.mixin {debounceMethod}
+    _.mixin {debounceMethod}, chain: false
   
-  _.mixin(isClass: _.isFunction)
+  _.mixin({isClass: _.isFunction}, chain: false)
   
   do ->
     {isFunction} = _
@@ -127,7 +127,7 @@
       else
         object?[method]
   
-    _.mixin {mapMethod}
+    _.mixin {mapMethod}, chain: false
   
   do ->
     {once} = _
@@ -137,7 +137,7 @@
         object[method] = once(object[method])
       return
       
-    _.mixin {onceMethod}
+    _.mixin {onceMethod}, chain: false
   
   do ->
     {extend} = _
@@ -164,7 +164,7 @@
       
       # COMPATIBILITY: This is old name
       copySuper: privatizeSuperclass
-    }
+    }, chain: false
   
   
   # _.createObject('foo', 'bar', 'baz', 'qux') => { foo: 'bar', baz: 'qux' }
@@ -176,7 +176,7 @@
       obj[arguments[idx - 1]] = arguments[idx]
     obj
   
-  _.mixin {createObject}
+  _.mixin {createObject}, chain: false
   
   do ->
     {keys} = _
@@ -185,7 +185,7 @@
       _keys = keys(obj)
       _keys[0] if _keys.length > 0
   
-    _.mixin {firstKey}
+    _.mixin {firstKey}, chain: false
   
   do ->
     {keys} = _
@@ -194,7 +194,7 @@
       _keys = keys(obj)
       obj[_keys[0]] if _keys.length > 0
   
-    _.mixin {firstValue}
+    _.mixin {firstValue}, chain: false
   
   traverseObject = getProperty = (obj, path) ->
     _obj = obj
@@ -213,7 +213,7 @@
   
     _obj if i > 0
     
-  _.mixin {traverseObject, getProperty}
+  _.mixin {traverseObject, getProperty}, chain: false
   
   setProperty = (obj, path, val) ->
     now = obj
@@ -236,12 +236,20 @@
   
     obj
   
-  _.mixin {setProperty}
+  _.mixin {setProperty}, chain: false
+  
+  do ->
+    {keys} = _
+  
+    keyval = (obj) ->
+      _keys = keys(obj)
+      [_keys[0], obj[_keys[0]]] if _keys.length > 0
+  
+    _.mixin {keyval}, chain: false
   
   
-  # TODO Rename
   # http://jsperf.com/apply-vs-custom-apply
-  applyWith = (func, context, args) ->
+  exec = (func, context, args) ->
     switch args.length
       when 0 then func.call(context)
       when 1 then func.call(context, args[0])
@@ -249,7 +257,7 @@
       when 3 then func.call(context, args[0], args[1], args[2])
       else func.apply(context, args)
   
-  _.mixin {applyWith}
+  _.mixin {exec}, chain: false
   
   do ->
     {keys}   = _
@@ -266,13 +274,13 @@
   
       else arg
   
-    _.mixin {firstOf}
+    _.mixin {firstOf}, chain: false
   
   generateID = do ->
     n = 0
     -> ++n
   
-  _.mixin {generateID}
+  _.mixin {generateID}, chain: false
   
   NATIVES = [Object, Array, Number, String, Boolean]
   
@@ -287,12 +295,12 @@
   
     # COMPATIBILITY: This is old name
     wasConstructed: isConstructed
-  }
+  }, chain: false
   
   isEnabled = (options, optionname) ->
     options isnt false and options?[optionname] isnt false
   
-  _.mixin {isEnabled}
+  _.mixin {isEnabled}, chain: false
   
   
   _

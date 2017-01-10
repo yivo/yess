@@ -15,7 +15,7 @@
       root._ = factory(root, Object, Array, Number, String, Boolean, root._);
     }
   })(function(__root__, Object, Array, Number, String, Boolean, _) {
-    var NATIVES, applyWith, createObject, equalArrays, generateID, getProperty, inGroupsOf, insertManyAt, insertOneAt, isConstructed, isEnabled, removeAt, replaceAll, setProperty, traverseObject;
+    var NATIVES, createObject, equalArrays, exec, generateID, getProperty, inGroupsOf, insertManyAt, insertOneAt, isConstructed, isEnabled, removeAt, replaceAll, setProperty, traverseObject;
     equalArrays = function(array, other) {
       var i, item, k, len1;
       if (array === other) {
@@ -34,6 +34,8 @@
     };
     _.mixin({
       equalArrays: equalArrays
+    }, {
+      chain: false
     });
     inGroupsOf = function(n, array, iteratee) {
       var group, groups, i, j, l;
@@ -58,6 +60,8 @@
     };
     _.mixin({
       inGroupsOf: inGroupsOf
+    }, {
+      chain: false
     });
     insertOneAt = function(ary, item, pos) {
       if ((pos | 0) <= ary.length) {
@@ -67,6 +71,8 @@
     };
     _.mixin({
       insertOneAt: insertOneAt
+    }, {
+      chain: false
     });
     insertManyAt = function(ary, items, pos) {
       if ((pos | 0) <= ary.length) {
@@ -76,6 +82,8 @@
     };
     _.mixin({
       insertManyAt: insertManyAt
+    }, {
+      chain: false
     });
     (function() {
       var insertAt, isArray;
@@ -90,6 +98,8 @@
       };
       return _.mixin({
         insertAt: insertAt
+      }, {
+        chain: false
       });
     })();
     removeAt = function(ary, pos, num) {
@@ -104,6 +114,8 @@
     };
     _.mixin({
       removeAt: removeAt
+    }, {
+      chain: false
     });
     replaceAll = function(ary, items) {
       if ((items != null ? items.length : void 0) > 0) {
@@ -114,6 +126,8 @@
     };
     _.mixin({
       replaceAll: replaceAll
+    }, {
+      chain: false
     });
     (function() {
       var bind, bindMethod;
@@ -128,6 +142,8 @@
       };
       return _.mixin({
         bindMethod: bindMethod
+      }, {
+        chain: false
       });
     })();
     (function() {
@@ -138,10 +154,14 @@
       };
       return _.mixin({
         debounceMethod: debounceMethod
+      }, {
+        chain: false
       });
     })();
     _.mixin({
       isClass: _.isFunction
+    }, {
+      chain: false
     });
     (function() {
       var isFunction, mapMethod;
@@ -155,6 +175,8 @@
       };
       return _.mixin({
         mapMethod: mapMethod
+      }, {
+        chain: false
       });
     })();
     (function() {
@@ -170,6 +192,8 @@
       };
       return _.mixin({
         onceMethod: onceMethod
+      }, {
+        chain: false
       });
     })();
     (function() {
@@ -196,6 +220,8 @@
       return _.mixin({
         privatizeSuperclass: privatizeSuperclass,
         copySuper: privatizeSuperclass
+      }, {
+        chain: false
       });
     })();
     createObject = function() {
@@ -210,6 +236,8 @@
     };
     _.mixin({
       createObject: createObject
+    }, {
+      chain: false
     });
     (function() {
       var firstKey, keys;
@@ -223,6 +251,8 @@
       };
       return _.mixin({
         firstKey: firstKey
+      }, {
+        chain: false
       });
     })();
     (function() {
@@ -237,6 +267,8 @@
       };
       return _.mixin({
         firstValue: firstValue
+      }, {
+        chain: false
       });
     })();
     traverseObject = getProperty = function(obj, path) {
@@ -266,6 +298,8 @@
     _.mixin({
       traverseObject: traverseObject,
       getProperty: getProperty
+    }, {
+      chain: false
     });
     setProperty = function(obj, path, val) {
       var before, i, j, len, now, prop;
@@ -294,8 +328,26 @@
     };
     _.mixin({
       setProperty: setProperty
+    }, {
+      chain: false
     });
-    applyWith = function(func, context, args) {
+    (function() {
+      var keys, keyval;
+      keys = _.keys;
+      keyval = function(obj) {
+        var _keys;
+        _keys = keys(obj);
+        if (_keys.length > 0) {
+          return [_keys[0], obj[_keys[0]]];
+        }
+      };
+      return _.mixin({
+        keyval: keyval
+      }, {
+        chain: false
+      });
+    })();
+    exec = function(func, context, args) {
       switch (args.length) {
         case 0:
           return func.call(context);
@@ -310,7 +362,9 @@
       }
     };
     _.mixin({
-      applyWith: applyWith
+      exec: exec
+    }, {
+      chain: false
     });
     (function() {
       var firstOf, isArray, isObject, keys, ref, ref1;
@@ -334,6 +388,8 @@
       };
       return _.mixin({
         firstOf: firstOf
+      }, {
+        chain: false
       });
     })();
     generateID = (function() {
@@ -345,6 +401,8 @@
     })();
     _.mixin({
       generateID: generateID
+    }, {
+      chain: false
     });
     NATIVES = [Object, Array, Number, String, Boolean];
     if (typeof Object.freeze === "function") {
@@ -357,12 +415,16 @@
     _.mixin({
       isConstructed: isConstructed,
       wasConstructed: isConstructed
+    }, {
+      chain: false
     });
     isEnabled = function(options, optionname) {
       return options !== false && (options != null ? options[optionname] : void 0) !== false;
     };
     _.mixin({
       isEnabled: isEnabled
+    }, {
+      chain: false
     });
     return _;
   });
