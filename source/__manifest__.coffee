@@ -18,6 +18,7 @@
 # @include object/firstValue.coffee
 # @include object/getProperty.coffee
 # @include object/setProperty.coffee
+# @include object/keyval.coffee
 
 # @include utils/exec.coffee
 # @include utils/firstOf.coffee

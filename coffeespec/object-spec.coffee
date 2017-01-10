@@ -21,3 +21,6 @@ describe 'Object', ->
     obj = {}
     expect(_.setProperty(obj, 'x.y.z', 1)).toBe(obj)
     expect(obj).toEqual({x:{y:{z:1}}})
+
+  it 'keyval', ->
+    expect(_.keyval(x: 'y')).toEqual(['x', 'y'])
