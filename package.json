@@ -1,6 +1,6 @@
 {
   "name": "yess",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Extends lodash with useful functions",
   "main": "build/yess.js",
   "scripts": {
@@ -26,7 +26,7 @@
     "gulp": "^3.9.1",
     "gulp-coffee": "^2.3.3",
     "gulp-concat": "^2.6.1",
-    "gulp-iife-wrap": "^1.0.5",
+    "gulp-umd-wrap": "^1.0.7",
     "gulp-plumber": "^1.1.0",
     "gulp-preprocess": "^2.0.0",
     "jasmine": "^2.5.2",

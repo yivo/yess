@@ -1,18 +1,23 @@
+
+/*!
+ * fn-focusring 1.0.11 | https://github.com/yivo/fn-focusring | MIT License
+ */
+
 (function() {
   var slice = [].slice,
     indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   (function(factory) {
-    var root;
-    root = typeof self === 'object' && self !== null && self.self === self ? self : typeof global === 'object' && global !== null && global.global === global ? global : void 0;
+    var __root__;
+    __root__ = typeof self === 'object' && self !== null && self.self === self ? self : typeof global === 'object' && global !== null && global.global === global ? global : Function('return this')();
     if (typeof define === 'function' && typeof define.amd === 'object' && define.amd !== null) {
-      define(['lodash', 'exports'], function(_) {
-        return root._ = factory(root, Object, Array, Number, String, Boolean, _);
+      define(['lodash'], function(_) {
+        return __root__._ = factory(__root__, Object, Array, Number, String, Boolean, _);
       });
     } else if (typeof module === 'object' && module !== null && typeof module.exports === 'object' && module.exports !== null) {
-      module.exports = factory(root, Object, Array, Number, String, Boolean, require('lodash'));
+      module.exports = factory(__root__, Object, Array, Number, String, Boolean, require('lodash'));
     } else {
-      root._ = factory(root, Object, Array, Number, String, Boolean, root._);
+      __root__._ = factory(__root__, Object, Array, Number, String, Boolean, _);
     }
   })(function(__root__, Object, Array, Number, String, Boolean, _) {
     var NATIVES, createObject, equalArrays, exec, generateID, getProperty, inGroupsOf, insertManyAt, insertOneAt, isConstructed, isEnabled, removeAt, replaceAll, setProperty, traverseObject;

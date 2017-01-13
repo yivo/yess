@@ -1,26 +1,33 @@
+###!
+# fn-focusring 1.0.11 | https://github.com/yivo/fn-focusring | MIT License
+###
+
 ((factory) ->
 
-  # Browser and WebWorker
-  root = if typeof self is 'object' and self isnt null and self.self is self
-    self
+  __root__ = 
+    # The root object for Browser or Web Worker
+    if typeof self is 'object' and self isnt null and self.self is self
+      self
 
-  # Server
-  else if typeof global is 'object' and global isnt null and global.global is global
-    global
+    # The root object for Server-side JavaScript Runtime
+    else if typeof global is 'object' and global isnt null and global.global is global
+      global
 
-  # AMD
+    else
+      Function('return this')()
+
+  # Asynchronous Module Definition (AMD)
   if typeof define is 'function' and typeof define.amd is 'object' and define.amd isnt null
-    define ['lodash', 'exports'], (_) ->
-      root._ = factory(root, Object, Array, Number, String, Boolean, _)
+    define ['lodash'], (_) ->
+      __root__._ = factory(__root__, Object, Array, Number, String, Boolean, _)
 
-  # CommonJS
-  else if typeof module is 'object' and module isnt null and
-          typeof module.exports is 'object' and module.exports isnt null
-    module.exports = factory(root, Object, Array, Number, String, Boolean, require('lodash'))
+  # Server-side JavaScript Runtime compatible with CommonJS Module Spec
+  else if typeof module is 'object' and module isnt null and typeof module.exports is 'object' and module.exports isnt null
+    module.exports = factory(__root__, Object, Array, Number, String, Boolean, require('lodash'))
 
-  # Browser and the rest
+  # Browser, Web Worker and the rest
   else
-    root._ = factory(root, Object, Array, Number, String, Boolean, root._)
+    __root__._ = factory(__root__, Object, Array, Number, String, Boolean, _)
 
   # No return value
   return

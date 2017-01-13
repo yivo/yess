@@ -2,9 +2,10 @@ gulp       = require 'gulp'
 concat     = require 'gulp-concat'
 coffee     = require 'gulp-coffee'
 preprocess = require 'gulp-preprocess'
-iife       = require 'gulp-iife-wrap'
+umd        = require 'gulp-umd-wrap'
 del        = require 'del'
 plumber    = require 'gulp-plumber'
+fs         = require 'fs'
 
 gulp.task 'default', ['build', 'watch'], ->
 
@@ -17,11 +18,12 @@ gulp.task 'build', ->
     { global: 'String',  native:  true }
     { global: 'Boolean', native:  true }
   ]
+  header = fs.readFileSync('./source/__license__.coffee').toString('UTF-8')
 
   gulp.src('source/__manifest__.coffee')
     .pipe plumber()
     .pipe preprocess()
-    .pipe iife({global: '_', dependencies})
+    .pipe umd({global: '_', dependencies, header})
     .pipe concat('yess.coffee')
     .pipe gulp.dest('build')
     .pipe coffee()
@@ -35,3 +37,6 @@ gulp.task 'coffeespec', ->
     .pipe gulp.dest('spec')
   gulp.src('coffeespec/support/jasmine.json')
     .pipe gulp.dest('spec/support')
+
+gulp.task 'watch', ->
+  gulp.watch 'source/**/*', ['build']
