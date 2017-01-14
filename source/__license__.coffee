@@ -1,3 +1,3 @@
 ###!
-# fn-focusring 1.0.11 | https://github.com/yivo/fn-focusring | MIT License
+# yess 1.2.2 | https://github.com/yivo/yess | MIT License
 ###
