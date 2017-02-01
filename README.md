@@ -7,6 +7,8 @@
 
 ### Usage
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/yivo/yess.svg)](https://greenkeeper.io/)
+
 #### In browser environment
 Just load `yess` after `lodash`.
 
