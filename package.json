@@ -33,6 +33,6 @@
     "preprocess": "^3.1.0"
   },
   "dependencies": {
-    "lodash": "4.x"
+    "lodash": "^4.17.13"
   }
 }
